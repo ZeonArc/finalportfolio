@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
-import anime from 'animejs';
+import { animate } from 'animejs';
+import { supabase } from '../supabaseClient';
 import './Contact.css';
 
 const Contact = () => {
@@ -29,15 +30,14 @@ const Contact = () => {
 
         // Floating shapes animation
         const shapes = document.querySelectorAll('.contact-shape');
-        anime({
-            targets: shapes,
-            translateY: () => anime.random(-20, 20),
-            translateX: () => anime.random(-20, 20),
-            rotate: () => anime.random(-15, 15),
+        animate(shapes, {
+            translateY: () => -20 + Math.random() * 40,
+            translateX: () => -20 + Math.random() * 40,
+            rotate: () => -15 + Math.random() * 30,
             duration: 3000,
             direction: 'alternate',
             loop: true,
-            easing: 'easeInOutSine'
+            ease: 'inOutSine' // V4 property is 'ease', not 'easing' usually? Step 755 shows 'easings' folder.
         });
 
     }, []);
@@ -61,11 +61,10 @@ const Contact = () => {
             setFormData({ name: '', email: '', subject: '', message: '' });
 
             // Success Animation
-            anime({
-                targets: '.submit-btn',
+            animate('.submit-btn', {
                 scale: [1, 1.1, 1],
                 duration: 300,
-                easing: 'easeInOutQuad'
+                ease: 'inOutQuad'
             });
 
         } catch (error) {

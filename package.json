@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.89.0",
-    "animejs": "^3.2.1",
+    "animejs": "^4.2.2",
     "gsap": "^3.14.2",
     "lucide-react": "^0.562.0",
     "react": "^19.2.0",

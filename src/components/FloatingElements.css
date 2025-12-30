@@ -1,43 +1,43 @@
 .floating-container {
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    z-index: 0;
     pointer-events: none;
-    z-index: 5;
-    overflow: hidden;
+    /* Centers the container so children orbit around the center of the hero */
+    transform: translate(-50%, -50%);
 }
 
 .float-icon {
     position: absolute;
-    color: var(--accent-secondary);
+    top: 0;
+    left: 0;
+    color: var(--accent-color);
     filter: drop-shadow(0 0 10px var(--accent-color));
+    opacity: 0;
+    /* Started hidden, handled by anime.js */
 }
 
-.icon-1 {
-    top: 20%;
-    left: 15%;
+/* Optional: vary colors slightly for depth */
+.icon-1,
+.icon-5 {
+    color: var(--accent-color);
 }
 
-.icon-2 {
-    top: 70%;
-    left: 80%;
+.icon-2,
+.icon-6 {
+    color: var(--accent-secondary);
 }
 
-.icon-3 {
-    top: 30%;
-    left: 85%;
+.icon-3,
+.icon-7 {
+    color: var(--text-color);
+    opacity: 0.5;
 }
 
-.icon-4 {
-    top: 80%;
-    left: 10%;
-}
-
-@media (max-width: 768px) {
-    .floating-container {
-        display: none;
-        /* Hide on mobile to avoid clutter */
-    }
+.icon-4,
+.icon-8 {
+    color: #fff;
 }
