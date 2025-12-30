@@ -1,0 +1,43 @@
+.floating-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 5;
+    overflow: hidden;
+}
+
+.float-icon {
+    position: absolute;
+    color: var(--accent-secondary);
+    filter: drop-shadow(0 0 10px var(--accent-color));
+}
+
+.icon-1 {
+    top: 20%;
+    left: 15%;
+}
+
+.icon-2 {
+    top: 70%;
+    left: 80%;
+}
+
+.icon-3 {
+    top: 30%;
+    left: 85%;
+}
+
+.icon-4 {
+    top: 80%;
+    left: 10%;
+}
+
+@media (max-width: 768px) {
+    .floating-container {
+        display: none;
+        /* Hide on mobile to avoid clutter */
+    }
+}
