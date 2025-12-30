@@ -26,7 +26,7 @@ const Navbar = () => {
     return (
         <nav ref={navRef} className="navbar glass">
             <div className="logo">
-                PORTFOLIO <span className="logo-dot">.</span>
+                Harish V <span className="logo-dot">.</span>
             </div>
             <ul className="nav-links">
                 <li><Link to="/">Home</Link></li>
