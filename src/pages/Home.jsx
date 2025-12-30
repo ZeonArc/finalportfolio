@@ -164,7 +164,7 @@ const Home = () => {
                             {profile ? profile.title : 'Loading...'}
                         </p>
                         <div className="hero-cta hero-anim-elem">
-                            <Link to="/games" className="cta-button primary">
+                            <Link to="/projects" className="cta-button primary">
                                 View Work <ArrowRight size={18} />
                             </Link>
                             <Link to="/contact" className="cta-button secondary">
