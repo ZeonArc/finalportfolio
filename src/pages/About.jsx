@@ -126,8 +126,8 @@ const About = () => {
                 <section ref={addToRefs} className="resume-section">
                     <h2><GraduationCap size={24} /> Education</h2>
                     <div className="education-item">
-                        <h3>BS in Computer Science</h3>
-                        <p>University of Technology • 2021</p>
+                        <h3>B.Tech in Computer Science and Engineering</h3>
+                        <p>SRM Institute of Science and Technology, Trichy • 2027</p>
                     </div>
                 </section>
             </div>
