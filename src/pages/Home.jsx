@@ -158,7 +158,7 @@ const Home = () => {
                             </svg>
                         </div>
                         <h1 className="hero-title">
-                            CREATIVE <span className="highlight">DEVELOPER</span>
+                            GAME <span className="highlight">DEVELOPER</span>
                         </h1>
                         <p className="hero-subtitle hero-anim-elem">
                             {profile ? profile.title : 'Loading...'}
