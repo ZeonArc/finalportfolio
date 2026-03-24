@@ -40,7 +40,6 @@ export default function SpotlightCard({ children, className = '', spotlightColor
             style={{
                 position: 'relative',
                 overflow: 'hidden',
-                borderRadius: 'inherit',
                 '--spotlight-color': spotlightColor,
                 height: '100%',
                 width: '100%'

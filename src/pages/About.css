@@ -143,6 +143,7 @@
 .bento-skills { grid-column: span 12; }
 .bento-experience { grid-column: span 7; }
 .bento-education { grid-column: span 5; }
+.bento-certifications { grid-column: span 12; }
 
 /* Timeline */
 .timeline {
@@ -240,6 +241,48 @@
 }
 
 .education-item p {
+    color: var(--text-muted);
+}
+
+/* Certifications */
+.certs-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1rem;
+}
+
+.cert-card {
+    background: var(--surface-color);
+    border: 1px solid var(--glass-border);
+    border-radius: 20px;
+    padding: 1.5rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.cert-card:hover {
+    border-color: var(--accent-color);
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0, 242, 254, 0.15);
+}
+
+.cert-card h3 {
+    font-size: 1.1rem;
+    color: var(--text-color);
+    margin: 0;
+}
+
+.cert-card .issuer {
+    font-size: 0.9rem;
+    color: var(--accent-secondary);
+}
+
+.cert-card .date {
+    font-size: 0.85rem;
     color: var(--text-muted);
 }
 

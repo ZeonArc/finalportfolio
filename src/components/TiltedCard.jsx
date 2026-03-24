@@ -51,7 +51,9 @@ export default function TiltedCard({ children, className = '', maxRotation = 15 
                     flexDirection: 'column',
                     width: '100%', 
                     height: '100%',
-                    willChange: 'transform'
+                    willChange: 'transform',
+                    borderRadius: '30px',
+                    overflow: 'hidden'
                 }}
             >
                 {children}

@@ -1,11 +1,12 @@
 import React, { useEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { Download, Briefcase, GraduationCap, Code, User, Loader } from 'lucide-react';
+import { Download, Briefcase, GraduationCap, Code, User, Loader, Award } from 'lucide-react';
 import { supabase } from '../supabaseClient';
 import SplitText from '../components/SplitText';
 import SpotlightCard from '../components/SpotlightCard';
 import ProfileCard from '../components/ProfileCard';
+import ImageModal from '../components/ImageModal';
 import profileImg from '../assets/Untitled (2).png';
 import './About.css';
 
@@ -16,6 +17,22 @@ const About = () => {
     const sectionsRef = useRef([]);
     const [profile, setProfile] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [selectedCert, setSelectedCert] = useState(null);
+
+    const defaultCerts = [
+        {
+            title: "AWS Certified Solutions Architect",
+            issuer: "Amazon Web Services",
+            date: "Jan 2024",
+            imageUrl: "https://d1.awsstatic.com/training-and-certification/certification-badges/AWS-Certified-Solutions-Architect-Associate_badge.34195159b02fc31dfa3ca561ffdd64ba9622ad19.png"
+        },
+        {
+            title: "Meta Front-End Developer",
+            issuer: "Coursera",
+            date: "Nov 2023",
+            imageUrl: "https://s3.amazonaws.com/coursera_assets/meta_images/generated/CERTIFICATE_LANDING_PAGE/CERTIFICATE_LANDING_PAGE~WNSUB6UBJ2MB/CERTIFICATE_LANDING_PAGE~WNSUB6UBJ2MB.jpeg"
+        }
+    ];
 
     useEffect(() => {
         const fetchProfile = async () => {
@@ -69,6 +86,8 @@ const About = () => {
     }
 
     if (!profile) return <div className="about-page">Profile not found.</div>;
+
+    const certsToRender = profile.certifications || defaultCerts;
 
     return (
         <div className="about-page">
@@ -153,8 +172,30 @@ const About = () => {
                         </div>
                     </section>
                     </SpotlightCard>
+                    {/* Certifications Section */}
+                    <SpotlightCard className="bento-item bento-certifications" spotlightColor="rgba(0, 242, 254, 0.08)">
+                        <section ref={addToRefs}>
+                            <h2><Award size={24} /> Certifications</h2>
+                            <div className="certs-grid">
+                                {certsToRender.map((cert, idx) => (
+                                    <div className="cert-card" key={idx} onClick={() => setSelectedCert(cert)}>
+                                        <h3>{cert.title}</h3>
+                                        <span className="issuer">{cert.issuer}</span>
+                                        <span className="date">{cert.date}</span>
+                                    </div>
+                                ))}
+                            </div>
+                        </section>
+                    </SpotlightCard>
                 </div>
             </div>
+
+            <ImageModal 
+                isOpen={!!selectedCert}
+                imageUrl={selectedCert?.imageUrl}
+                altText={selectedCert?.title}
+                onClose={() => setSelectedCert(null)}
+            />
         </div>
     );
 };

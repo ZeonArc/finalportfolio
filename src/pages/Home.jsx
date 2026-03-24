@@ -221,7 +221,7 @@ const Home = () => {
             <section className="featured-section">
                 <div className="section-header">
                     <h2>Featured Projects</h2>
-                    <Link to="/games" className="view-all">View All <ArrowRight size={16} /></Link>
+                    <Link to="/projects" className="view-all">View All <ArrowRight size={16} /></Link>
                 </div>
                 <div className="featured-gallery" ref={featuredRef}>
                     {featuredProjects.length > 0 ? (

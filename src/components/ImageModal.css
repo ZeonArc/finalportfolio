@@ -1,0 +1,83 @@
+.image-modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(15px);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    animation: fadeIn 0.3s forwards ease-out;
+    padding: 2rem;
+}
+
+.image-modal-content {
+    position: relative;
+    max-width: 90vw;
+    max-height: 90vh;
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: 30px;
+    padding: 1rem;
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5);
+    transform: scale(0.95);
+    animation: popUp 0.4s forwards cubic-bezier(0.16, 1, 0.3, 1);
+    display: flex;
+    flex-direction: column;
+}
+
+.image-modal-img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    border-radius: 20px;
+    max-height: calc(90vh - 2rem);
+}
+
+.image-modal-close {
+    position: absolute;
+    top: -20px;
+    right: -20px;
+    background: var(--accent-color);
+    border: none;
+    color: #000;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    z-index: 10;
+    transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.image-modal-close:hover {
+    transform: scale(1.1) rotate(90deg);
+    background: #fff;
+}
+
+@keyframes fadeIn {
+    to { opacity: 1; }
+}
+
+@keyframes popUp {
+    to { transform: scale(1); }
+}
+
+@media (max-width: 768px) {
+    .image-modal-backdrop {
+        padding: 1rem;
+    }
+    .image-modal-close {
+        top: -15px;
+        right: -15px;
+        width: 36px;
+        height: 36px;
+    }
+}
