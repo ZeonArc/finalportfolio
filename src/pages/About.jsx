@@ -3,6 +3,10 @@ import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { Download, Briefcase, GraduationCap, Code, User, Loader } from 'lucide-react';
 import { supabase } from '../supabaseClient';
+import SplitText from '../components/SplitText';
+import SpotlightCard from '../components/SpotlightCard';
+import ProfileCard from '../components/ProfileCard';
+import profileImg from '../assets/Untitled (2).png';
 import './About.css';
 
 gsap.registerPlugin(ScrollTrigger);
@@ -69,67 +73,87 @@ const About = () => {
     return (
         <div className="about-page">
             <div className="resume-container">
-                {/* Header Section */}
-                <header ref={headerRef} className="resume-header">
-                    <div className="profile-photo-container">
-                        <div className="profile-photo-placeholder"
-                            style={profile.avatar_url ? { backgroundImage: `url(${profile.avatar_url})`, backgroundSize: 'cover' } : {}}>
-                            {!profile.avatar_url && <User size={60} />}
+                {/* Professional Hero Section */}
+                <SpotlightCard className="bento-item about-hero-container" spotlightColor="rgba(0, 242, 254, 0.08)" style={{ marginBottom: '4rem', padding: '3rem' }}>
+                    <div ref={headerRef} className="about-hero" style={{ margin: 0 }}>
+                        <div className="about-hero-text">
+                            <h1><SplitText delay={0.2} stagger={0.05}>{profile.full_name}</SplitText></h1>
+                            <p className="subtitle">{profile.title}</p>
+                            <p className="bio"><SplitText delay={0.4} stagger={0.01}>{profile.bio}</SplitText></p>
+                        </div>
+                        <div className="profile-card-wrapper" style={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
+                            <ProfileCard
+                                name={profile.full_name}
+                                title={profile.title}
+                                handle={profile.linkedin_url ? "LinkedIn" : "Connect"}
+                                status="Available for work"
+                                contactText="Download Resume"
+                                avatarUrl={profileImg}
+                                miniAvatarUrl={profileImg}
+                                showUserInfo={true}
+                                enableTilt={true}
+                                enableMobileTilt={false}
+                                onContactClick={() => {
+                                    if (profile.resume_url) window.open(profile.resume_url, '_blank')
+                                }}
+                                behindGlowColor="rgba(0, 242, 254, 0.4)"
+                                behindGlowEnabled={true}
+                            />
                         </div>
                     </div>
-                    <div className="header-content">
-                        <h1>{profile.full_name}</h1>
-                        <p className="subtitle">{profile.title}</p>
-                        <p className="bio">{profile.bio}</p>
-                        <a href={profile.resume_url || '#'} className="download-btn" target="_blank" rel="noopener noreferrer">
-                            <Download size={18} />
-                            Download Resume
-                        </a>
-                    </div>
-                </header>
+                </SpotlightCard>
 
-                {/* Experience Section */}
-                <section ref={addToRefs} className="resume-section">
-                    <h2><Briefcase size={24} /> Experience</h2>
-                    <div className="timeline">
-                        {profile.experience && profile.experience.map((job, idx) => (
-                            <div className="timeline-item" key={idx}>
-                                <div className="timeline-date">{job.period}</div>
-                                <div className="timeline-content">
-                                    <h3>{job.title}</h3>
-                                    <h4 className="company">{job.company}</h4>
-                                    <p>{job.description}</p>
+                {/* Bento Grid layout for rest of resume */}
+                <div className="about-bento">
+                    {/* Skills Section (Full Width) */}
+                    <SpotlightCard className="bento-item bento-skills" spotlightColor="rgba(0, 242, 254, 0.08)">
+                        <section ref={addToRefs}>
+                        <h2><Code size={24} /> Skills</h2>
+                        <div className="skills-grid">
+                            {profile.skills && Object.entries(profile.skills).map(([category, items], idx) => (
+                                <div className="skill-category" key={idx}>
+                                    <h3 style={{ textTransform: 'capitalize' }}>{category}</h3>
+                                    <div className="tags">
+                                        {items.map((skill, sIdx) => (
+                                            <span key={sIdx}>{skill}</span>
+                                        ))}
+                                    </div>
                                 </div>
-                            </div>
-                        ))}
-                    </div>
-                </section>
+                            ))}
+                        </div>
+                    </section>
+                    </SpotlightCard>
 
-                {/* Skills Section */}
-                <section ref={addToRefs} className="resume-section">
-                    <h2><Code size={24} /> Skills</h2>
-                    <div className="skills-grid">
-                        {profile.skills && Object.entries(profile.skills).map(([category, items], idx) => (
-                            <div className="skill-category" key={idx}>
-                                <h3 style={{ textTransform: 'capitalize' }}>{category}</h3>
-                                <div className="tags">
-                                    {items.map((skill, sIdx) => (
-                                        <span key={sIdx}>{skill}</span>
-                                    ))}
-                                </div>
+                    {/* Experience Section */}
+                    <SpotlightCard className="bento-item bento-experience" spotlightColor="rgba(0, 242, 254, 0.08)">
+                        <section ref={addToRefs}>
+                            <h2><Briefcase size={24} /> Experience</h2>
+                            <div className="timeline">
+                                {profile.experience && profile.experience.map((job, idx) => (
+                                    <div className="timeline-item" key={idx}>
+                                        <div className="timeline-date">{job.period}</div>
+                                        <div className="timeline-content">
+                                            <h3>{job.title}</h3>
+                                            <h4 className="company">{job.company}</h4>
+                                            <p>{job.description}</p>
+                                        </div>
+                                    </div>
+                                ))}
                             </div>
-                        ))}
-                    </div>
-                </section>
+                        </section>
+                    </SpotlightCard>
 
-                {/* Education Section */}
-                <section ref={addToRefs} className="resume-section">
-                    <h2><GraduationCap size={24} /> Education</h2>
-                    <div className="education-item">
-                        <h3>B.Tech in Computer Science and Engineering</h3>
-                        <p>SRM Institute of Science and Technology, Trichy • 2027</p>
-                    </div>
-                </section>
+                    {/* Education Section */}
+                    <SpotlightCard className="bento-item bento-education" spotlightColor="rgba(0, 242, 254, 0.08)">
+                    <section ref={addToRefs}>
+                        <h2><GraduationCap size={24} /> Education</h2>
+                        <div className="education-item">
+                            <h3>B.Tech in Computer Science and Engineering</h3>
+                            <p>SRM Institute of Science and Technology, Trichy • 2027</p>
+                        </div>
+                    </section>
+                    </SpotlightCard>
+                </div>
             </div>
         </div>
     );

@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from 'react';
+import SquaresBackground from './SquaresBackground';
 
 const Background = () => {
     const canvasRef = useRef(null);
@@ -73,18 +74,27 @@ const Background = () => {
     }, []); // Re-run if theme changes? The animate loop reads CSS vars live, so it might handle it.
 
     return (
-        <canvas
-            ref={canvasRef}
-            style={{
-                position: 'fixed',
-                top: 0,
-                left: 0,
-                width: '100%',
-                height: '100%',
-                zIndex: -1,
-                pointerEvents: 'none',
-            }}
-        />
+        <>
+            <canvas
+                ref={canvasRef}
+                style={{
+                    position: 'fixed',
+                    top: 0,
+                    left: 0,
+                    width: '100%',
+                    height: '100%',
+                    zIndex: -3,
+                    pointerEvents: 'none',
+                }}
+            />
+            <SquaresBackground 
+                direction="diagonal" 
+                speed={0.4} 
+                squareSize={50} 
+                borderColor="rgba(255, 255, 255, 0.05)"
+                hoverFillColor="rgba(0, 242, 254, 0.15)"
+            />
+        </>
     );
 };
 

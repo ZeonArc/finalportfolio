@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import TiltedCard from './TiltedCard';
 import './ProjectShowcase.css';
 
 gsap.registerPlugin(ScrollTrigger);
@@ -32,7 +33,7 @@ const ProjectShowcase = () => {
         );
 
         // Cards animation
-        const cards = gsap.utils.toArray('.project-card');
+        const cards = gsap.utils.toArray('.showcase-tilted-wrapper');
         cards.forEach((card, i) => {
             gsap.fromTo(card,
                 { y: 100, opacity: 0 },
@@ -55,15 +56,17 @@ const ProjectShowcase = () => {
             <h2 className="section-title" ref={titleRef}>Selected Works</h2>
             <div className="projects-grid">
                 {projects.map((project) => (
-                    <div key={project.id} className="project-card">
-                        <div className="card-image">
-                            <img src={project.image} alt={project.title} />
-                            <div className="card-overlay">
-                                <h3>{project.title}</h3>
-                                <span>{project.category}</span>
+                    <TiltedCard key={project.id} className="showcase-tilted-wrapper">
+                        <div className="project-card" style={{ height: '100%' }}>
+                            <div className="card-image">
+                                <img src={project.image} alt={project.title} />
+                                <div className="card-overlay">
+                                    <h3>{project.title}</h3>
+                                    <span>{project.category}</span>
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    </TiltedCard>
                 ))}
             </div>
         </div>

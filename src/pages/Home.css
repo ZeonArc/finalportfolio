@@ -189,6 +189,7 @@
     font-size: 2rem;
     margin-bottom: 0.5rem;
     background: linear-gradient(135deg, var(--text-color), var(--accent-color));
+    background-clip: text;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
 }
@@ -338,7 +339,7 @@
     z-index: 2;
     background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
     padding: 1.5rem;
-    border-radius: 20px;
+    border-radius: 30px;
     border: 1px solid rgba(255, 255, 255, 0.1);
     backdrop-filter: blur(5px);
     transform: translateY(20px);
@@ -376,7 +377,7 @@
     color: var(--accent-color);
     background: rgba(255, 255, 255, 0.1);
     padding: 10px;
-    border-radius: 12px;
+    border-radius: 20px;
 }
 
 .gallery-arrow {
@@ -413,11 +414,21 @@
     .hero-container {
         grid-template-columns: 1fr;
         padding-top: 2rem;
-        gap: 2rem;
+        gap: 3rem;
+        text-align: center;
     }
 
     .hero-content {
         text-align: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .signature-wrapper {
+        margin-bottom: 0;
+        margin-left: auto;
+        margin-right: auto;
     }
 
     .hero-title {
@@ -426,5 +437,84 @@
 
     .hero-cta {
         justify-content: center;
+    }
+}
+
+@media (max-width: 768px) {
+    .hero-section {
+        padding-top: 60px; /* Reduced for smaller nav */
+    }
+
+    .hero-title {
+        font-size: 2.5rem;
+        letter-spacing: -1px;
+    }
+
+    .hero-subtitle {
+        font-size: 1.1rem;
+        margin-bottom: 2rem;
+    }
+
+    .cta-button {
+        padding: 0.8rem 1.5rem;
+        font-size: 0.8rem;
+    }
+
+    .signature-wrapper {
+        width: 200px;
+        height: 60px;
+    }
+    
+    .profile-card {
+        padding: 1.5rem;
+        max-width: 100%;
+    }
+    
+    .profile-icon {
+        width: 100px;
+        height: 100px;
+    }
+
+    .tech-stack-section {
+        padding: 1.5rem 0;
+    }
+
+    .marquee-content {
+        gap: 2rem;
+    }
+
+    .marquee-content span {
+        font-size: 1.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .hero-container {
+        padding: 0 1.5rem;
+    }
+
+    .hero-title {
+        font-size: 2rem;
+    }
+
+    .hero-cta {
+        flex-direction: column;
+        width: 100%;
+        gap: 1rem;
+    }
+
+    .cta-button {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .section-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+    
+    .section-header h2 {
+        font-size: 2rem;
     }
 }

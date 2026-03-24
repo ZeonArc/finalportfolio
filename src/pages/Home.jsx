@@ -6,6 +6,8 @@ import { Link } from 'react-router-dom';
 import { ArrowRight, Code, Layers, Zap, User } from 'lucide-react';
 import { animate, createDrawable } from 'animejs';
 import { supabase } from '../supabaseClient';
+import Magnet from '../components/Magnet';
+import SpotlightCard from '../components/SpotlightCard';
 import './Home.css';
 
 gsap.registerPlugin(ScrollTrigger);
@@ -164,12 +166,16 @@ const Home = () => {
                             {profile ? profile.title : 'Loading...'}
                         </p>
                         <div className="hero-cta hero-anim-elem">
-                            <Link to="/projects" className="cta-button primary">
-                                View Work <ArrowRight size={18} />
-                            </Link>
-                            <Link to="/contact" className="cta-button secondary">
-                                Let's Talk
-                            </Link>
+                            <Magnet padding={50} magnetStrength={0.2}>
+                                <Link to="/projects" className="cta-button primary">
+                                    View Work <ArrowRight size={18} />
+                                </Link>
+                            </Magnet>
+                            <Magnet padding={50} magnetStrength={0.2}>
+                                <Link to="/contact" className="cta-button secondary">
+                                    Let's Talk
+                                </Link>
+                            </Magnet>
                         </div>
                     </div>
 
@@ -220,28 +226,30 @@ const Home = () => {
                 <div className="featured-gallery" ref={featuredRef}>
                     {featuredProjects.length > 0 ? (
                         featuredProjects.map(project => (
-                            <Link to="/projects" key={project.id} className="gallery-item glass">
-                                {/* Background Image (Hidden by default, visible on hover/expand) */}
-                                <div
-                                    className="gallery-bg"
-                                    style={project.image_url ? { backgroundImage: `url(${project.image_url})` } : {}}
-                                ></div>
+                            <SpotlightCard key={project.id} className="gallery-item glass" spotlightColor="rgba(0, 242, 254, 0.2)">
+                                <Link to="/projects" style={{ display: 'flex', flexDirection: 'column', height: '100%', textDecoration: 'none', color: 'inherit', width: '100%' }}>
+                                    {/* Background Image (Hidden by default, visible on hover/expand) */}
+                                    <div
+                                        className="gallery-bg"
+                                        style={project.image_url ? { backgroundImage: `url(${project.image_url})`, zIndex: 0 } : { zIndex: 0 }}
+                                    ></div>
 
-                                <div className="gallery-content">
-                                    <div className="gallery-icon">
-                                        {project.category === 'Games' && <Zap size={24} />}
-                                        {project.category === 'Web' && <Layers size={24} />}
-                                        {project.category === 'Design' && <Code size={24} />}
+                                    <div className="gallery-content">
+                                        <div className="gallery-icon">
+                                            {project.category === 'Games' && <Zap size={24} />}
+                                            {project.category === 'Web' && <Layers size={24} />}
+                                            {project.category === 'Design' && <Code size={24} />}
+                                        </div>
+                                        <div className="gallery-text">
+                                            <h3>{project.title}</h3>
+                                            <span className="gallery-cat">{project.category}</span>
+                                        </div>
+                                        <div className="gallery-arrow">
+                                            <ArrowRight size={20} />
+                                        </div>
                                     </div>
-                                    <div className="gallery-text">
-                                        <h3>{project.title}</h3>
-                                        <span className="gallery-cat">{project.category}</span>
-                                    </div>
-                                    <div className="gallery-arrow">
-                                        <ArrowRight size={20} />
-                                    </div>
-                                </div>
-                            </Link>
+                                </Link>
+                            </SpotlightCard>
                         ))
                     ) : (
                         <div className="loading-state">Loading Projects...</div>

@@ -2,6 +2,8 @@ import React, { useEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
 import { animate } from 'animejs';
 import { supabase } from '../supabaseClient';
+import Magnet from '../components/Magnet';
+import SplitText from '../components/SplitText';
 import './Contact.css';
 
 const Contact = () => {
@@ -81,7 +83,10 @@ const Contact = () => {
             </div>
 
             <div className="contact-container">
-                <h1>Let's Level Up <br /> <span className="highlight">Your Project</span></h1>
+                <h1>
+                    <SplitText delay={0.2} stagger={0.05}>Let's Level Up</SplitText> <br /> 
+                    <span className="highlight"><SplitText delay={0.8} stagger={0.05}>Your Project</SplitText></span>
+                </h1>
                 <p className="contact-subtitle">
                     Have a game idea, a website request, or just want to chat technology? Drop a line.
                 </p>
@@ -131,9 +136,11 @@ const Contact = () => {
                             onChange={handleChange}
                         ></textarea>
                     </div>
-                    <button type="submit" className="submit-btn">
-                        {status || 'Send Message'}
-                    </button>
+                    <Magnet padding={50} magnetStrength={0.4}>
+                        <button type="submit" className="submit-btn" style={{ width: '100%' }}>
+                            {status === 'sending' ? 'Sending...' : status === 'success' ? 'Message Sent!' : status === 'error' ? 'Error. Try Again.' : 'Send Message'}
+                        </button>
+                    </Magnet>
                 </form>
             </div>
         </div>

@@ -3,6 +3,8 @@ import { supabase } from '../supabaseClient';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { Layers, Zap, Code, ExternalLink } from 'lucide-react';
+import SpotlightCard from '../components/SpotlightCard';
+import SplitText from '../components/SplitText';
 import './Projects.css';
 
 gsap.registerPlugin(ScrollTrigger);
@@ -53,7 +55,7 @@ const Projects = () => {
     return (
         <div className="projects-page">
             <div className="projects-header">
-                <h1>My <span className="highlight">Work</span></h1>
+                <h1><SplitText delay={0.2} stagger={0.1}>My Work</SplitText></h1>
                 <p>Explore my portfolio across different dimensions.</p>
 
                 <div className="filter-tabs">
@@ -74,7 +76,7 @@ const Projects = () => {
                     <div className="loading">Loading Projects...</div>
                 ) : filteredProjects.length > 0 ? (
                     filteredProjects.map(project => (
-                        <div key={project.id} className="project-card glass">
+                        <SpotlightCard key={project.id} className="project-card glass" spotlightColor="rgba(0, 242, 254, 0.15)">
                             <div
                                 className="project-image"
                                 style={project.image_url ? { backgroundImage: `url(${project.image_url})` } : {}}
@@ -102,7 +104,7 @@ const Projects = () => {
                                     ))}
                                 </div>
                             </div>
-                        </div>
+                        </SpotlightCard>
                     ))
                 ) : (
                     <div className="no-projects">No projects found in this category.</div>

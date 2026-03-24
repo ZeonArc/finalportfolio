@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import gsap from 'gsap';
-import { Draggable } from 'gsap/Draggable';
+import { Draggable } from 'gsap/all';
 import { Gamepad2, Ghost, Sword, Trophy, Joystick, Dice5, Crosshair, Sparkles } from 'lucide-react';
 import './FloatingElements.css';
 
@@ -16,8 +16,11 @@ const FloatingElements = () => {
         tweensRef.current = []; // Reset tweens
 
         icons.forEach((icon, i) => {
-            // Randomize orbit parameters
-            const radius = 350 + Math.random() * 300;
+            // Randomize orbit parameters based on screen size
+            const isMobile = window.innerWidth < 768;
+            const baseRadius = isMobile ? 150 : 350;
+            const radius = baseRadius + Math.random() * (isMobile ? 100 : 300);
+            
             const duration = 15 + Math.random() * 10;
             const startAngle = Math.random() * 360;
 
