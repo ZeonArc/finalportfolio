@@ -21,16 +21,34 @@ const About = () => {
 
     const defaultCerts = [
         {
-            title: "AWS Certified Solutions Architect",
-            issuer: "Amazon Web Services",
-            date: "Jan 2024",
+            title: "Unity Associate Game Developer",
+            issuer: "Unity",
+            date: "April 2026",
             imageUrl: "https://d1.awsstatic.com/training-and-certification/certification-badges/AWS-Certified-Solutions-Architect-Associate_badge.34195159b02fc31dfa3ca561ffdd64ba9622ad19.png"
         },
         {
-            title: "Meta Front-End Developer",
-            issuer: "Coursera",
-            date: "Nov 2023",
-            imageUrl: "https://s3.amazonaws.com/coursera_assets/meta_images/generated/CERTIFICATE_LANDING_PAGE/CERTIFICATE_LANDING_PAGE~WNSUB6UBJ2MB/CERTIFICATE_LANDING_PAGE~WNSUB6UBJ2MB.jpeg"
+            title: "Epic Games Game Design",
+            issuer: "Epic Games",
+            date: "Jan 2026",
+            imageUrl: "https://www.coursera.org/account/accomplishments/specialization/certificate/JFDL02B4GA3U"
+        },
+        {
+            title: "Product Management Job Simulation",
+            issuer: "Electronic Arts",
+            date: "Jan 2026",
+            imageUrl: "https://www.coursera.org/account/accomplishments/specialization/certificate/JFDL02B4GA3U"
+        },
+        {
+            title: "Epic Games Game Design",
+            issuer: "Epic Games",
+            date: "Jan 2026",
+            imageUrl: "https://www.coursera.org/account/accomplishments/specialization/certificate/JFDL02B4GA3U"
+        },
+        {
+            title: "Epic Games Game Design",
+            issuer: "Epic Games",
+            date: "Jan 2026",
+            imageUrl: "https://www.coursera.org/account/accomplishments/specialization/certificate/JFDL02B4GA3U"
         }
     ];
 
