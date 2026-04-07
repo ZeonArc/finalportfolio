@@ -1,8 +1,5 @@
-/* App specific styles */
 .app-container {
-  width: 100%;
-  min-height: 100vh;
   position: relative;
-  overflow: hidden;
-  /* For local animations */
+  min-height: 100vh;
+  padding-bottom: 100px; /* Space for hotbar */
 }
