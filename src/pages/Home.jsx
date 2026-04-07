@@ -1,258 +1,279 @@
 import React, { useEffect, useRef, useState } from 'react';
-import FloatingElements from '../components/FloatingElements';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { Link } from 'react-router-dom';
-import { ArrowRight, Code, Layers, Zap, User } from 'lucide-react';
-import { animate, createDrawable } from 'animejs';
+import { ArrowRight, Sword, Shield, Zap, Code, Layers, Star, Sparkles } from 'lucide-react';
 import { supabase } from '../supabaseClient';
-import Magnet from '../components/Magnet';
+import SplitText from '../components/SplitText';
 import SpotlightCard from '../components/SpotlightCard';
 import './Home.css';
 
 gsap.registerPlugin(ScrollTrigger);
 
 const Home = () => {
-    const heroTextRef = useRef(null);
-    const featuredRef = useRef(null);
-    const aboutRef = useRef(null);
-
+    const heroRef = useRef(null);
     const [profile, setProfile] = useState(null);
     const [featuredProjects, setFeaturedProjects] = useState([]);
+    const [typedTitle, setTypedTitle] = useState('');
+    const fullTitle = 'Game Developer & Creative Coder';
 
     useEffect(() => {
         const fetchData = async () => {
-            // Fetch Profile
-            const { data: profileData } = await supabase
-                .from('profile')
-                .select('*')
-                .single();
+            const { data: profileData } = await supabase.from('profile').select('*').single();
             if (profileData) setProfile(profileData);
-
-            // Fetch Featured Projects
-            const { data: projectsData } = await supabase
-                .from('projects')
-                .select('*')
-                .eq('is_featured', true)
-                .limit(3);
+            const { data: projectsData } = await supabase.from('projects').select('*').eq('is_featured', true).limit(3);
             if (projectsData) setFeaturedProjects(projectsData);
         };
-
         fetchData();
     }, []);
 
+    // Typewriter effect for subtitle
     useEffect(() => {
-        // Hero Static Animations (Run ONCE)
-        const tl = gsap.timeline();
+        const title = profile?.title || fullTitle;
+        let i = 0;
+        const interval = setInterval(() => {
+            setTypedTitle(title.slice(0, i + 1));
+            i++;
+            if (i >= title.length) clearInterval(interval);
+        }, 60);
+        return () => clearInterval(interval);
+    }, [profile]);
 
-        // Anime.js V4 Signature Animation
-        const signatureText = document.querySelector('.signature-text');
-        if (signatureText) {
-            animate(createDrawable('.signature-text'), {
-                draw: ['0 0', '0 1'],
-                duration: 3000,
-                ease: 'inOutSine',
-                delay: 500,
-                loop: false
+    useEffect(() => {
+        const ctx = gsap.context(() => {
+            // GSAP Timeline for hero — cinematic entrance
+            const tl = gsap.timeline({ delay: 0.3 });
+
+            // 1. Splash screen flash
+            tl.fromTo('.mc-splash-overlay',
+                { opacity: 1 },
+                { opacity: 0, duration: 0.8, ease: 'power2.out' }
+            )
+            // 2. Title drops in with 3D flip
+            .fromTo('.mc-big-title',
+                { y: -80, opacity: 0, rotateX: -60, scale: 1.3 },
+                { y: 0, opacity: 1, rotateX: 0, scale: 1, duration: 1.2, ease: 'elastic.out(1, 0.5)' },
+                '-=0.3'
+            )
+            // 3. Subtitle typewriter cursor blink starts
+            .fromTo('.mc-subtitle-line',
+                { opacity: 0, clipPath: 'inset(0 100% 0 0)' },
+                { opacity: 1, clipPath: 'inset(0 0% 0 0)', duration: 0.8, ease: 'power2.out' },
+                '-=0.6'
+            )
+            // 4. Version tag slides in from left
+            .fromTo('.mc-version-tag',
+                { x: -30, opacity: 0 },
+                { x: 0, opacity: 1, duration: 0.5, ease: 'power2.out' },
+                '-=0.4'
+            )
+            // 5. CTAs pop in
+            .fromTo('.hero-cta-mc .mc-btn',
+                { y: 20, opacity: 0, scale: 0.8 },
+                { y: 0, opacity: 1, scale: 1, duration: 0.5, stagger: 0.12, ease: 'back.out(2.5)' },
+                '-=0.2'
+            )
+            // 6. Player card slides in from right
+            .fromTo('.mc-player-card',
+                { x: 80, opacity: 0, rotateY: 15 },
+                { x: 0, opacity: 1, rotateY: 0, duration: 0.8, ease: 'power3.out' },
+                '-=0.5'
+            )
+            // 7. Splash text floating
+            .fromTo('.mc-splash-text',
+                { opacity: 0, scale: 0.5, rotateZ: -5 },
+                { opacity: 1, scale: 1, rotateZ: 3, duration: 0.6, ease: 'back.out(2)' },
+                '-=0.3'
+            );
+
+            // Floating splash text wobble
+            gsap.to('.mc-splash-text', {
+                rotateZ: -3, duration: 2, yoyo: true, repeat: -1, ease: 'sine.inOut'
             });
 
-            const textEl = document.querySelector('.signature-text');
-            if (textEl) textEl.style.opacity = '1';
-        }
-
-        // Animate Hero Content (Title, Subtitle, Buttons)
-        if (heroTextRef.current) {
-            tl.fromTo(heroTextRef.current.children,
-                { y: 50, opacity: 0 },
+            // ─── ScrollTrigger sections ───
+            // Stats: counter-like stagger with scale bounce
+            gsap.fromTo('.stat-block',
+                { y: 50, opacity: 0, scale: 0.5, rotateZ: -5 },
                 {
-                    y: 0,
-                    opacity: 1,
-                    duration: 1.2,
-                    stagger: 0.15,
-                    ease: 'power2.out',
-                    delay: 0.2
+                    y: 0, opacity: 1, scale: 1, rotateZ: 0, duration: 0.6, stagger: 0.12,
+                    ease: 'back.out(2)',
+                    scrollTrigger: { trigger: '.mc-stats-section', start: 'top 82%' }
                 }
             );
-        }
 
-        // Animate Profile Card (About Me) - Static/One-time entry
-        if (aboutRef.current) {
-            // Animate the card itself or its children
-            gsap.fromTo(aboutRef.current,
-                { x: 50, opacity: 0 }, // Slide in from right slightly
+            // Marquee fade in
+            gsap.fromTo('.mc-marquee-section',
+                { opacity: 0 },
                 {
-                    x: 0,
-                    opacity: 1,
-                    duration: 1.2,
-                    ease: 'power2.out',
-                    delay: 0.5 // Wait a bit for hero text
+                    opacity: 1, duration: 1,
+                    scrollTrigger: { trigger: '.mc-marquee-section', start: 'top 90%' }
                 }
             );
-        }
-    }, []); // Empty dependency array = Runs once on mount
 
-    useEffect(() => {
-        // Scroll Animations (Wait for data content)
-        if (featuredRef.current && featuredRef.current.children.length > 0) {
-            gsap.fromTo(featuredRef.current.children,
-                { y: 50, opacity: 0 },
+            // Featured projects: staggered slide + scale
+            gsap.fromTo('.mc-featured-item',
+                { y: 60, opacity: 0, scale: 0.9 },
                 {
-                    y: 0, opacity: 1, duration: 0.8, stagger: 0.2, ease: 'power3.out',
-                    scrollTrigger: {
-                        trigger: featuredRef.current,
-                        start: 'top 80%',
-                    }
+                    y: 0, opacity: 1, scale: 1, duration: 0.7, stagger: 0.15,
+                    ease: 'power3.out',
+                    scrollTrigger: { trigger: '.mc-featured-section', start: 'top 80%' }
                 }
             );
-        }
-    }, [featuredProjects]); // Re-run only when content that affects layout changes
 
-    const handleMouseMove = (e) => {
-        if (!aboutRef.current) return;
-        const card = aboutRef.current;
-        const rect = card.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
-        const centerX = rect.width / 2;
-        const centerY = rect.height / 2;
+            // Section headers: slide in
+            gsap.fromTo('.mc-section-header',
+                { x: -30, opacity: 0 },
+                {
+                    x: 0, opacity: 1, duration: 0.6,
+                    scrollTrigger: { trigger: '.mc-featured-section', start: 'top 85%' }
+                }
+            );
 
-        const rotateX = ((y - centerY) / centerY) * -10; // Max 10deg rotation
-        const rotateY = ((x - centerX) / centerX) * 10;
+        }, heroRef);
 
-        gsap.to(card, {
-            rotationX: rotateX,
-            rotationY: rotateY,
-            transformPerspective: 1000,
-            duration: 0.5,
-            ease: 'power2.out'
-        });
-    };
-
-    const handleMouseLeave = () => {
-        if (!aboutRef.current) return;
-        gsap.to(aboutRef.current, {
-            rotationX: 0,
-            rotationY: 0,
-            duration: 0.5,
-            ease: 'power2.out'
-        });
-    };
+        return () => ctx.revert();
+    }, [featuredProjects]);
 
     return (
-        <div className="home-page">
-            <section className="hero-section">
-                <FloatingElements />
-                <div className="hero-container">
-                    {/* Left: Text Content */}
-                    <div className="hero-content" ref={heroTextRef}>
-                        <div className="signature-wrapper">
-                            <svg className="signature-svg" viewBox="0 0 400 100">
-                                <text
-                                    x="0" y="50%"
-                                    dominantBaseline="middle"
-                                    textAnchor="start"
-                                    className="signature-text"
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                >
-                                    Harish V
-                                </text>
-                            </svg>
+        <div className="home-page" ref={heroRef}>
+            {/* Splash overlay */}
+            <div className="mc-splash-overlay" />
+
+            {/* === HERO === */}
+            <section className="mc-hero-section">
+                <div className="mc-hero-container">
+                    <div className="mc-hero-text" style={{ perspective: '1000px' }}>
+                        <div className="mc-version-tag">
+                            <span className="mc-tag-dot" /> Portfolio v2.0
                         </div>
-                        <h1 className="hero-title">
-                            GAME <span className="highlight">DEVELOPER</span>
+
+                        <h1 className="mc-big-title">
+                            <SplitText delay={0.6} stagger={0.06}>HARISH V</SplitText>
                         </h1>
-                        <p className="hero-subtitle hero-anim-elem">
-                            {profile ? profile.title : 'Loading...'}
-                        </p>
-                        <div className="hero-cta hero-anim-elem">
-                            <Magnet padding={50} magnetStrength={0.2}>
-                                <Link to="/projects" className="cta-button primary">
-                                    View Work <ArrowRight size={18} />
-                                </Link>
-                            </Magnet>
-                            <Magnet padding={50} magnetStrength={0.2}>
-                                <Link to="/contact" className="cta-button secondary">
-                                    Let's Talk
-                                </Link>
-                            </Magnet>
+
+                        <div className="mc-subtitle-line">
+                            <span className="mc-typed-text">{typedTitle}</span>
+                            <span className="mc-cursor-blink">_</span>
+                        </div>
+
+                        {/* Minecraft splash text */}
+                        <div className="mc-splash-text">
+                            <Sparkles size={12} />
+                            Also try Terraria!
+                        </div>
+
+                        <div className="hero-cta-mc">
+                            <Link to="/projects" className="mc-btn mc-btn-primary cursor-target">
+                                <Sword size={14} /> View My Work <ArrowRight size={14} />
+                            </Link>
+                            <Link to="/contact" className="mc-btn mc-btn-secondary cursor-target">
+                                <Shield size={14} /> Let's Talk
+                            </Link>
                         </div>
                     </div>
 
-                    {/* Right: Interactive Profile Card */}
-                    <div className="hero-profile"
-                        onMouseMove={handleMouseMove}
-                        onMouseLeave={handleMouseLeave}>
-                        <div className="profile-card glass" ref={aboutRef}>
-                            <div className="card-inner">
-                                <div className="profile-icon">
-                                    {profile && profile.avatar_url ?
-                                        <img src={profile.avatar_url} alt="Profile" /> :
-                                        <User size={40} />
-                                    }
+                    {/* Player Card */}
+                    <div className="mc-player-card">
+                        <div className="mc-card-header">
+                            <div className="mc-card-avatar mc-slot">
+                                {profile?.avatar_url ? <img src={profile.avatar_url} alt="Profile" /> : <span>⛏️</span>}
+                            </div>
+                            <div className="mc-card-nameplate">
+                                <span className="mc-card-name">{profile?.full_name || 'Harish V'}</span>
+                                <span className="mc-card-title">{profile?.title || 'Game Developer'}</span>
+                            </div>
+                            <Star size={16} className="mc-card-star" />
+                        </div>
+                        <div className="mc-card-body">
+                            <p className="mc-card-bio">
+                                {profile?.bio || 'Crafting immersive games and creative web experiences with modern tech.'}
+                            </p>
+                            <div className="mc-card-stats-row">
+                                <div className="mc-mini-stat">
+                                    <span className="mc-ms-val">10+</span>
+                                    <span className="mc-ms-label">Projects</span>
                                 </div>
-                                <div className="profile-info">
-                                    <h3>About Me</h3>
-                                    <p>{profile ? profile.bio : 'Loading bio...'}</p>
-                                    <Link to="/about" className="text-link">Full Bio <ArrowRight size={14} /></Link>
+                                <div className="mc-mini-stat">
+                                    <span className="mc-ms-val">5+</span>
+                                    <span className="mc-ms-label">Tech</span>
+                                </div>
+                                <div className="mc-mini-stat">
+                                    <span className="mc-ms-val">2+</span>
+                                    <span className="mc-ms-label">Years</span>
                                 </div>
                             </div>
+                            <div className="mc-card-xp">
+                                <span className="mc-xp-text">XP Level 99</span>
+                                <div className="xp-bar"><div className="xp-bar-fill" style={{ width: '85%' }} /></div>
+                            </div>
+                            <Link to="/about" className="mc-card-link cursor-target">
+                                Open Inventory <ArrowRight size={14} />
+                            </Link>
                         </div>
                     </div>
                 </div>
             </section>
 
-            {/* Tech Stack Marquee */}
-            <section className="tech-stack-section">
-                <div className="marquee-container">
-                    <div className="marquee-content">
-                        <span>REACT</span><span>THREE.JS</span><span>UNITY</span>
-                        <span>BLENDER</span><span>GSAP</span><span>NODE.JS</span>
-                        <span>TYPESCRIPT</span><span>SUPABASE</span>
-                        {/* Duplicate loop */}
-                        <span>REACT</span><span>THREE.JS</span><span>UNITY</span>
-                        <span>BLENDER</span><span>GSAP</span><span>NODE.JS</span>
-                        <span>TYPESCRIPT</span><span>SUPABASE</span>
+            {/* === MARQUEE === */}
+            <section className="mc-marquee-section">
+                <div className="mc-marquee">
+                    <div className="mc-marquee-track">
+                        {['REACT', 'THREE.JS', 'UNITY', 'UNREAL', 'BLENDER', 'GSAP', 'NODE.JS', 'C#', 'JAVA',
+                          'REACT', 'THREE.JS', 'UNITY', 'UNREAL', 'BLENDER', 'GSAP', 'NODE.JS', 'C#', 'JAVA'].map((tech, i) => (
+                            <span key={i} className="mc-marquee-item"><span className="mc-marquee-diamond">◆</span> {tech}</span>
+                        ))}
                     </div>
                 </div>
             </section>
 
-            {/* Featured Work */}
-            <section className="featured-section">
-                <div className="section-header">
-                    <h2>Featured Projects</h2>
-                    <Link to="/projects" className="view-all">View All <ArrowRight size={16} /></Link>
+            {/* === STATS === */}
+            <section className="mc-stats-section">
+                <div className="mc-stats-grid">
+                    {[
+                        { value: '10+', label: 'Projects Crafted', icon: '⚔️' },
+                        { value: '5+', label: 'Technologies', icon: '⛏️' },
+                        { value: '2+', label: 'Years XP', icon: '🏆' },
+                        { value: '∞', label: 'Passion', icon: '❤️' },
+                    ].map((stat, i) => (
+                        <SpotlightCard key={i} className="stat-block mc-slot" spotlightColor="rgba(74, 237, 217, 0.1)">
+                            <span className="stat-emoji">{stat.icon}</span>
+                            <span className="stat-value">{stat.value}</span>
+                            <span className="stat-label">{stat.label}</span>
+                        </SpotlightCard>
+                    ))}
                 </div>
-                <div className="featured-gallery" ref={featuredRef}>
+            </section>
+
+            {/* === FEATURED === */}
+            <section className="mc-featured-section">
+                <div className="mc-section-header">
+                    <h2><SplitText delay={0.1} stagger={0.04}>Featured Loot</SplitText></h2>
+                    <Link to="/projects" className="mc-view-all cursor-target">View All <ArrowRight size={16} /></Link>
+                </div>
+                <div className="mc-featured-grid">
                     {featuredProjects.length > 0 ? (
                         featuredProjects.map(project => (
-                            <SpotlightCard key={project.id} className="gallery-item glass" spotlightColor="rgba(0, 242, 254, 0.2)">
-                                <Link to="/projects" style={{ display: 'flex', flexDirection: 'column', height: '100%', textDecoration: 'none', color: 'inherit', width: '100%' }}>
-                                    {/* Background Image (Hidden by default, visible on hover/expand) */}
-                                    <div
-                                        className="gallery-bg"
-                                        style={project.image_url ? { backgroundImage: `url(${project.image_url})`, zIndex: 0 } : { zIndex: 0 }}
-                                    ></div>
-
-                                    <div className="gallery-content">
-                                        <div className="gallery-icon">
-                                            {project.category === 'Games' && <Zap size={24} />}
-                                            {project.category === 'Web' && <Layers size={24} />}
-                                            {project.category === 'Design' && <Code size={24} />}
+                            <SpotlightCard key={project.id} className="mc-featured-item mc-slot" spotlightColor="rgba(74, 237, 217, 0.12)">
+                                <Link to="/projects" className="mc-featured-link cursor-target">
+                                    <div className="mc-featured-bg" style={project.image_url ? { backgroundImage: `url(${project.image_url})` } : {}} />
+                                    <div className="mc-featured-content">
+                                        <div className="mc-featured-icon">
+                                            {project.category === 'Games' && <Zap size={20} />}
+                                            {project.category === 'Web' && <Layers size={20} />}
+                                            {!['Games', 'Web'].includes(project.category) && <Code size={20} />}
                                         </div>
-                                        <div className="gallery-text">
+                                        <div className="mc-featured-info">
                                             <h3>{project.title}</h3>
-                                            <span className="gallery-cat">{project.category}</span>
+                                            <span className="mc-featured-cat">{project.category}</span>
                                         </div>
-                                        <div className="gallery-arrow">
-                                            <ArrowRight size={20} />
-                                        </div>
+                                        <ArrowRight size={16} className="mc-featured-arrow" />
                                     </div>
                                 </Link>
                             </SpotlightCard>
                         ))
                     ) : (
-                        <div className="loading-state">Loading Projects...</div>
+                        <div className="mc-loading-state"><div className="mc-loading" /><span>Loading loot...</span></div>
                     )}
                 </div>
             </section>

@@ -1,50 +1,89 @@
-.site-footer {
-    padding: 3rem 10%;
-    background: var(--glass-bg, rgba(0, 0, 0, 0.3));
-    border-top: 1px solid var(--glass-border, rgba(255, 255, 255, 0.05));
+/* ============================================
+   FOOTER — MINECRAFT BEDROCK
+   ============================================ */
+
+.mc-footer {
+    padding: 2.5rem 2rem;
+    background: linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.4) 100%);
+    border-top: 2px solid var(--glass-border);
     text-align: center;
     position: relative;
     z-index: 10;
+    margin-bottom: 120px; /* Space for the hotbar to pop up without blocking text */
 }
 
-.footer-content {
+.mc-footer-content {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 1.5rem;
+    gap: 1.2rem;
 }
 
-.footer-logo {
-    font-size: 1.5rem;
-    font-weight: 800;
-    letter-spacing: 2px;
-}
-
-.social-links {
+.mc-footer-brand {
     display: flex;
-    gap: 1.5rem;
+    align-items: center;
+    gap: 0.4rem;
 }
 
-.social-icon {
+.mc-footer-logo {
+    font-family: var(--font-pixel);
+    font-size: 0.6rem;
     color: var(--text-color);
-    opacity: 0.7;
-    transition: all 0.3s;
-    background: var(--surface-color, rgba(255, 255, 255, 0.05));
-    padding: 10px;
-    border-radius: 50%;
+    letter-spacing: 1px;
+    text-shadow: 2px 2px 0 rgba(0,0,0,0.5);
+}
+
+.mc-footer-dot {
+    color: var(--accent-color);
+    font-size: 0.5rem;
+    text-shadow: 0 0 8px var(--accent-glow);
+}
+
+.mc-footer-links {
+    display: flex;
+    gap: 0.8rem;
+}
+
+.mc-social-link {
+    width: 40px;
+    height: 40px;
     display: flex;
     align-items: center;
     justify-content: center;
+    background: linear-gradient(180deg, #2a2a2a 0%, #1a1a1a 100%);
+    border: 2px solid;
+    border-color: #555 #2a2a2a #2a2a2a #555;
+    color: var(--text-muted);
+    text-decoration: none;
+    transition: all 0.3s ease;
+    box-shadow:
+        inset 2px 2px 0 rgba(255,255,255,0.05),
+        inset -2px -2px 0 rgba(0,0,0,0.3);
 }
 
-.social-icon:hover {
-    opacity: 1;
-    background: var(--accent-color);
-    color: black;
+.mc-social-link:hover {
+    border-color: var(--accent-color);
+    color: var(--accent-color);
+    box-shadow:
+        0 0 12px var(--accent-glow),
+        inset 2px 2px 0 rgba(255,255,255,0.05);
     transform: translateY(-3px);
 }
 
-.copyright {
-    font-size: 0.8rem;
-    color: #666;
+.mc-footer-copy {
+    font-family: var(--font-pixel-body);
+    font-size: 0.95rem;
+    color: var(--text-muted);
+    opacity: 0.6;
+}
+
+@media (max-width: 480px) {
+    .mc-social-link {
+        width: 36px;
+        height: 36px;
+    }
+
+    .mc-footer-links {
+        gap: 0.5rem;
+    }
 }

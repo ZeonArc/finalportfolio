@@ -1,32 +1,65 @@
-:root {
-  /* Default to Neon Theme values */
-  --bg-color: #050505;
-  --text-color: #ffffff;
-  --accent-color: #00f2fe;
-  /* Cyan */
-  --accent-secondary: #4facfe;
-  /* Blue */
-  --surface-color: rgba(255, 255, 255, 0.05);
-  --font-main: 'Inter', system-ui, Avenir, Helvetica, Arial, sans-serif;
+/* ============================================
+   MINECRAFT PORTFOLIO — GLOBAL DESIGN SYSTEM
+   ============================================ */
 
-  /* Derived colors */
-  --text-muted: rgba(255, 255, 255, 0.6);
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+:root {
+  /* === Minecraft Color Palette === */
+  --mc-grass: #5D8C3E;
+  --mc-dirt: #8B6914;
+  --mc-stone: #7F7F7F;
+  --mc-diamond: #4AEDD9;
+  --mc-gold: #FCDB05;
+  --mc-redstone: #FF1A1A;
+  --mc-emerald: #17DD62;
+  --mc-obsidian: #1B1029;
+  --mc-lapis: #345EC3;
+  --mc-netherrack: #723232;
+  --mc-endstone: #DBDE8C;
+  --mc-bedrock: #333333;
+  --mc-xp-green: #7FFF00;
+
+  /* === Active Theme (Default: Overworld) === */
+  --bg-color: #0a0e0a;
+  --bg-deep: #050805;
+  --text-color: #e8ffe8;
+  --text-muted: rgba(232, 255, 232, 0.55);
+  --accent-color: #4AEDD9;
+  --accent-secondary: #17DD62;
+  --accent-glow: rgba(74, 237, 217, 0.3);
+  --surface-color: rgba(93, 140, 62, 0.08);
+  --glass-bg: rgba(10, 20, 10, 0.65);
+  --glass-border: rgba(93, 140, 62, 0.15);
+  --pixel-border: 3px solid rgba(93, 140, 62, 0.3);
+
+  /* === Gradients === */
+  --gradient-1: #1a3a1a;
+  --gradient-2: #0d2b0d;
+  --gradient-3: #0a1f0a;
+
+  /* === Typography === */
+  --font-pixel: 'Press Start 2P', monospace;
+  --font-pixel-body: 'VT323', monospace;
+  --font-main: 'Inter', system-ui, -apple-system, sans-serif;
+
+  /* === Spacing === */
+  --pixel-size: 4px;
 
   font-family: var(--font-main);
   line-height: 1.5;
   font-weight: 400;
-
-  color-scheme: dark light;
+  color-scheme: dark;
   color: var(--text-color);
   background-color: var(--bg-color);
-
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-* {
+/* === Reset === */
+*, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
@@ -36,68 +69,201 @@ body {
   width: 100%;
   min-height: 100vh;
   overflow-x: hidden;
-  background-color: transparent;
-  /* Changed to transparent for Canvas visibility */
+  background-color: var(--bg-color);
   color: var(--text-color);
 }
 
+/* === Links === */
 a {
   font-weight: 500;
   color: var(--accent-color);
-  text-decoration: inherit;
-  transition: 0.3s;
+  text-decoration: none;
+  transition: all 0.3s ease;
 }
 
 a:hover {
   color: var(--accent-secondary);
+  text-shadow: 0 0 8px var(--accent-glow);
 }
 
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
+/* === Headings === */
+h1, h2, h3, h4, h5, h6 {
   font-weight: 700;
   line-height: 1.1;
 }
 
+/* === Pixel Button Base === */
 button {
-  border-radius: 20px;
-  border: 1px solid transparent;
+  border: var(--pixel-border);
   padding: 0.6em 1.2em;
   font-size: 1em;
   font-weight: 500;
-  font-family: inherit;
-  background-color: var(--surface-color);
+  font-family: var(--font-pixel-body);
+  background: var(--glass-bg);
   color: var(--text-color);
   cursor: pointer;
-  transition: border-color 0.25s;
+  transition: all 0.25s ease;
+  position: relative;
+  image-rendering: pixelated;
 }
 
 button:hover {
   border-color: var(--accent-color);
+  box-shadow: 0 0 12px var(--accent-glow),
+              inset 0 0 12px rgba(74, 237, 217, 0.05);
 }
 
 button:focus,
 button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
+  outline: 2px solid var(--accent-color);
+  outline-offset: 2px;
 }
 
-/* Scrollbar */
+/* === Minecraft-Style Pixel Border Utility === */
+.pixel-border {
+  border: 3px solid;
+  border-image: linear-gradient(
+    135deg,
+    rgba(255,255,255,0.2) 0%,
+    rgba(255,255,255,0.05) 50%,
+    rgba(0,0,0,0.3) 100%
+  ) 1;
+  box-shadow:
+    inset 2px 2px 0 rgba(255,255,255,0.1),
+    inset -2px -2px 0 rgba(0,0,0,0.3);
+}
+
+/* === Glass Panel === */
+.glass {
+  background: var(--glass-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-border);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+/* === Minecraft Inventory Slot === */
+.mc-slot {
+  background: linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 100%);
+  border: 3px solid;
+  border-color: #555 #2a2a2a #2a2a2a #555;
+  box-shadow:
+    inset 2px 2px 0 rgba(255,255,255,0.08),
+    inset -2px -2px 0 rgba(0,0,0,0.4);
+  transition: all 0.2s ease;
+}
+
+.mc-slot:hover {
+  border-color: var(--mc-diamond) var(--mc-diamond) var(--mc-diamond) var(--mc-diamond);
+  box-shadow:
+    0 0 15px rgba(74, 237, 217, 0.3),
+    inset 2px 2px 0 rgba(255,255,255,0.08),
+    inset -2px -2px 0 rgba(0,0,0,0.4);
+}
+
+/* === Enchantment Glow Effect === */
+.enchanted {
+  animation: enchant-shimmer 3s ease-in-out infinite;
+}
+
+@keyframes enchant-shimmer {
+  0%, 100% {
+    filter: brightness(1) hue-rotate(0deg);
+  }
+  50% {
+    filter: brightness(1.3) hue-rotate(15deg);
+  }
+}
+
+/* === XP Bar Utility === */
+.xp-bar {
+  height: 6px;
+  background: #1a1a1a;
+  border: 1px solid #333;
+  border-radius: 0;
+  overflow: hidden;
+}
+
+.xp-bar-fill {
+  height: 100%;
+  background: var(--mc-xp-green);
+  box-shadow: 0 0 8px rgba(127, 255, 0, 0.5);
+  transition: width 1s ease;
+}
+
+/* === Tooltip (Minecraft Style) === */
+.mc-tooltip {
+  background: rgba(16, 0, 16, 0.94);
+  border: 2px solid;
+  border-color: #5a2d82 #28007a #28007a #5a2d82;
+  padding: 6px 10px;
+  font-family: var(--font-pixel-body);
+  font-size: 1.1rem;
+  color: #fff;
+  pointer-events: none;
+  z-index: 1000;
+  white-space: nowrap;
+}
+
+/* === Scrollbar (Minecraft themed) === */
 ::-webkit-scrollbar {
-  width: 8px;
+  width: 10px;
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--bg-color);
+  background: #1a1a1a;
+  border-left: 1px solid #333;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #333;
-  border-radius: 12px;
+  background: linear-gradient(180deg, #555 0%, #3a3a3a 100%);
+  border: 1px solid #666;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #555;
+  background: linear-gradient(180deg, #777 0%, #555 100%);
+  border-color: var(--mc-diamond);
+}
+
+/* === Selection === */
+::selection {
+  background: rgba(74, 237, 217, 0.3);
+  color: #fff;
+}
+
+/* === Utility Animations === */
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes pixel-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+@keyframes block-place {
+  0% { transform: scale(0) rotate(-10deg); opacity: 0; }
+  60% { transform: scale(1.1) rotate(2deg); opacity: 1; }
+  100% { transform: scale(1) rotate(0deg); opacity: 1; }
+}
+
+/* === Loading Spinner (Minecraft style) === */
+.mc-loading {
+  width: 40px;
+  height: 40px;
+  border: 4px solid var(--glass-border);
+  border-top-color: var(--mc-diamond);
+  animation: mc-spin 0.8s linear infinite;
+}
+
+@keyframes mc-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* === Responsive Base === */
+@media (max-width: 768px) {
+  :root {
+    --pixel-size: 2px;
+  }
 }

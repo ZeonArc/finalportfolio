@@ -1,166 +1,334 @@
-.navbar {
+/* ============================================
+   MINECRAFT HOTBAR NAVIGATION — Enhanced
+   ============================================ */
+
+/* === Top Bar === */
+.mc-top-bar {
     position: fixed;
-    top: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 90%;
-    max-width: 1200px;
-    padding: 1rem 2rem;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    z-index: 100;
-    border-radius: 30px;
-    transition: all 0.3s ease;
-    color: var(--text-color);
+    padding: 0.7rem 1.5rem;
+    background: linear-gradient(180deg, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.3) 60%, transparent 100%);
+    pointer-events: none;
 }
 
-.glass {
-    background: var(--glass-bg, rgba(255, 255, 255, 0.05));
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border: 1px solid var(--glass-border, rgba(255, 255, 255, 0.1));
-    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+.mc-top-bar > * {
+    pointer-events: auto;
 }
 
-.nav-actions {
+.mc-logo {
     display: flex;
-    gap: 1rem;
     align-items: center;
-}
-
-.logo {
-    font-size: 1.5rem;
-    font-weight: 800;
-    letter-spacing: 2px;
-    cursor: pointer;
-}
-
-.logo-dot {
-    color: var(--accent-color);
-}
-
-.nav-links {
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
-    display: flex;
-    gap: 2rem;
-    list-style: none;
-    margin: 0;
-    padding: 0;
-}
-
-.nav-links a {
+    gap: 0.5rem;
     text-decoration: none;
-    font-size: 1rem;
-    font-weight: 500;
     color: var(--text-color);
-    position: relative;
-    padding: 5px 0;
-    opacity: 0.8;
-    transition: opacity 0.3s;
+    transition: transform 0.3s ease;
 }
 
-.nav-links a:hover {
-    opacity: 1;
+.mc-logo:hover {
+    transform: scale(1.05);
+    color: var(--text-color);
+}
+
+.mc-logo-icon {
     color: var(--accent-color);
+    font-size: 0.7rem;
+    text-shadow: 0 0 10px var(--accent-glow);
+    animation: pixel-pulse 2s ease-in-out infinite;
 }
 
-.nav-links a::after {
-    content: '';
-    position: absolute;
-    bottom: -4px;
-    left: 0;
-    width: 0%;
-    height: 2px;
-    background-color: var(--accent-color);
-    transition: width 0.3s ease;
+.mc-logo-text {
+    font-family: var(--font-pixel);
+    font-size: 0.65rem;
+    letter-spacing: 1px;
+    text-shadow: 2px 2px 0 rgba(0,0,0,0.9), 0 0 10px rgba(0,0,0,0.5);
 }
 
-.nav-links a:hover::after {
-    width: 100%;
+.mc-top-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
 }
 
-.theme-toggle {
-    background: var(--surface-color);
-    border: 1px solid var(--glass-border);
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
+.mc-biome-label {
+    font-family: var(--font-pixel-body);
+    font-size: 1rem;
+    color: var(--text-muted);
+    letter-spacing: 0.5px;
+    text-shadow: 1px 1px 0 rgba(0,0,0,0.5);
+}
+
+.mc-theme-btn {
+    width: 32px;
+    height: 32px;
     display: flex;
     align-items: center;
     justify-content: center;
-    cursor: pointer;
+    background: linear-gradient(180deg, #3a3a3a 0%, #2a2a2a 100%);
+    border: 2px solid;
+    border-color: #666 #333 #333 #666;
     color: var(--text-color);
+    cursor: pointer;
     transition: all 0.3s ease;
-    backdrop-filter: blur(5px);
+    padding: 0;
+    box-shadow:
+        inset 1px 1px 0 rgba(255,255,255,0.08),
+        inset -1px -1px 0 rgba(0,0,0,0.3);
 }
 
-.theme-toggle:hover {
+.mc-theme-btn:hover {
     background: var(--accent-color);
     color: #000;
-    transform: rotate(15deg);
+    border-color: var(--accent-color);
+    box-shadow: 0 0 15px var(--accent-glow);
 }
 
-@media (max-width: 768px) {
-    .navbar {
-        width: 95%;
-        padding: 0.8rem 1.5rem;
-    }
-
-    .mobile-toggle {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background: transparent;
-        border: none;
-        color: var(--text-color);
-        cursor: pointer;
-        z-index: 101;
-    }
-
-    .nav-links {
-        display: flex;
-        flex-direction: column;
-        position: absolute;
-        top: 100%;
-        left: 0;
-        right: 0;
-        background: var(--glass-bg);
-        backdrop-filter: blur(20px);
-        -webkit-backdrop-filter: blur(20px);
-        padding: 2rem;
-        border-radius: 30px;
-        border: 1px solid var(--glass-border);
-        margin-top: 1rem;
-        transform: translateY(-20px); 
-        opacity: 0;
-        visibility: hidden;
-        transition: all 0.3s ease;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-    }
-
-    .nav-links.active {
-        opacity: 1;
-        visibility: visible;
-        transform: translateY(0);
-    }
-
-    .nav-links li {
-        text-align: center;
-        width: 100%;
-    }
-    
-    .nav-links a {
-        display: block;
-        padding: 1rem 0;
-        font-size: 1.2rem;
-    }
+/* === Bottom Hotbar === */
+.mc-hotbar {
+    position: fixed;
+    bottom: 16px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 990;
+    display: flex;
+    align-items: flex-end;
+    gap: 8px;
 }
 
-@media (min-width: 769px) {
-    .mobile-toggle {
+.hotbar-frame {
+    padding: 5px;
+    background: linear-gradient(180deg,
+        rgba(48, 48, 48, 0.95) 0%,
+        rgba(28, 28, 28, 0.98) 100%
+    );
+    border: 3px solid;
+    border-color: #777 #333 #2a2a2a #777;
+    box-shadow:
+        0 10px 50px rgba(0, 0, 0, 0.7),
+        0 2px 10px rgba(0, 0, 0, 0.5),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1),
+        inset 0 -2px 0 rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(20px);
+}
+
+.hotbar-container {
+    display: flex;
+    gap: 3px;
+}
+
+/* === Individual Slot === */
+.hotbar-slot {
+    position: relative;
+    width: 56px;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    color: var(--text-muted);
+    background: linear-gradient(180deg, #2e2e2e 0%, #1c1c1c 100%);
+    border: 2px solid;
+    border-color: #4a4a4a #222 #222 #4a4a4a;
+    box-shadow:
+        inset 2px 2px 0 rgba(255,255,255,0.04),
+        inset -2px -2px 0 rgba(0,0,0,0.5);
+    transition: background 0.15s ease, color 0.15s ease;
+    transform-style: preserve-3d;
+    perspective: 200px;
+}
+
+.hotbar-slot:hover {
+    background: linear-gradient(180deg, #3e3e3e 0%, #2e2e2e 100%);
+    border-color: #666 #333 #333 #666;
+    color: var(--text-color);
+}
+
+.hotbar-slot.active {
+    background: linear-gradient(180deg,
+        rgba(74, 237, 217, 0.12) 0%,
+        rgba(74, 237, 217, 0.04) 100%
+    );
+    border-color: var(--accent-color);
+    color: var(--accent-color);
+    box-shadow:
+        0 0 18px var(--accent-glow),
+        0 -4px 12px rgba(74, 237, 217, 0.1),
+        inset 2px 2px 0 rgba(255,255,255,0.08),
+        inset -2px -2px 0 rgba(0,0,0,0.2);
+}
+
+.slot-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+    position: relative;
+    z-index: 2;
+}
+
+.slot-icon {
+    transition: transform 0.3s ease, filter 0.3s ease;
+    will-change: transform;
+}
+
+.hotbar-slot.active .slot-icon {
+    filter: drop-shadow(0 0 6px var(--accent-glow));
+}
+
+.slot-number {
+    position: absolute;
+    top: -10px;
+    right: -6px;
+    font-family: var(--font-pixel);
+    font-size: 0.4rem;
+    color: rgba(255, 255, 255, 0.2);
+    text-shadow: 1px 1px 0 rgba(0,0,0,0.9);
+}
+
+.hotbar-slot.active .slot-number {
+    color: var(--accent-color);
+    text-shadow: 0 0 6px var(--accent-glow);
+}
+
+/* Active label below slot */
+.slot-active-label {
+    position: absolute;
+    bottom: -18px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: var(--font-pixel);
+    font-size: 0.35rem;
+    color: var(--accent-color);
+    white-space: nowrap;
+    text-shadow: 0 0 6px var(--accent-glow), 1px 1px 0 rgba(0,0,0,0.9);
+    letter-spacing: 0.5px;
+}
+
+/* === Minecraft Tooltip === */
+.slot-tooltip {
+    position: absolute;
+    bottom: calc(100% + 12px);
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(16, 0, 24, 0.95);
+    border: 2px solid;
+    border-color: #5a2d82 #28007a #28007a #5a2d82;
+    padding: 4px 10px;
+    font-family: var(--font-pixel-body);
+    font-size: 1rem;
+    color: #fff;
+    white-space: nowrap;
+    pointer-events: none;
+    opacity: 0;
+    z-index: 200;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+}
+
+.slot-tooltip::after {
+    content: '';
+    position: absolute;
+    bottom: -6px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 6px solid #28007a;
+}
+
+/* === Active Glow === */
+.slot-active-glow {
+    position: absolute;
+    inset: -6px;
+    background: radial-gradient(circle, var(--accent-glow) 0%, transparent 65%);
+    z-index: 0;
+    animation: slot-glow-breathe 2.5s ease-in-out infinite;
+    pointer-events: none;
+}
+
+@keyframes slot-glow-breathe {
+    0%, 100% { opacity: 0.25; transform: scale(0.95); }
+    50% { opacity: 0.5; transform: scale(1.05); }
+}
+
+/* === Scroll to Top === */
+.mc-scroll-top {
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(180deg, #3a3a3a 0%, #2a2a2a 100%);
+    border: 2px solid;
+    border-color: #666 #333 #333 #666;
+    color: var(--text-muted);
+    cursor: pointer;
+    padding: 0;
+    transition: all 0.3s ease;
+    animation: block-place 0.4s ease;
+    box-shadow:
+        inset 1px 1px 0 rgba(255,255,255,0.08),
+        inset -1px -1px 0 rgba(0,0,0,0.3);
+}
+
+.mc-scroll-top:hover {
+    border-color: var(--accent-color);
+    color: var(--accent-color);
+    box-shadow: 0 0 12px var(--accent-glow);
+    transform: translateY(-2px);
+}
+
+/* === Responsive === */
+@media (max-width: 600px) {
+    .mc-hotbar {
+        bottom: 8px;
+    }
+
+    .hotbar-frame {
+        padding: 3px;
+    }
+
+    .hotbar-slot {
+        width: 48px;
+        height: 48px;
+    }
+
+    .slot-icon {
+        width: 16px;
+        height: 16px;
+    }
+
+    .slot-active-label {
+        font-size: 0.3rem;
+        bottom: -14px;
+    }
+
+    .mc-logo-text {
+        font-size: 0.55rem;
+    }
+
+    .mc-biome-label {
         display: none;
+    }
+
+    .mc-top-bar {
+        padding: 0.5rem 0.8rem;
+    }
+}
+
+@media (max-width: 380px) {
+    .hotbar-slot {
+        width: 42px;
+        height: 42px;
+    }
+
+    .hotbar-container {
+        gap: 2px;
     }
 }

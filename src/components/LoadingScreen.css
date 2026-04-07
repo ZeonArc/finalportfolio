@@ -1,0 +1,41 @@
+/* Mojang Style Loading Screen */
+.mc-loading-screen {
+    position: fixed;
+    inset: 0;
+    background-color: #EF323D; /* Mojang Red */
+    z-index: 99999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.mc-loader-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2rem;
+    transform: translateY(-20px);
+}
+
+.mc-loader-logo {
+    font-family: var(--font-pixel);
+    font-size: 2.5rem;
+    color: #fff;
+    text-shadow: 4px 4px 0 #8E1319;
+    letter-spacing: 2px;
+}
+
+.mc-loader-bar-container {
+    width: 300px;
+    height: 12px;
+    background: #8E1319;
+    border: 2px solid #fff;
+    padding: 2px;
+}
+
+.mc-loader-bar-fill {
+    height: 100%;
+    background: #fff;
+    width: 0%;
+    transition: width 0.15s ease-out;
+}
