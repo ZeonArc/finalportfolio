@@ -1,5 +1,24 @@
+/* App Container — scrollable content only */
 .app-container {
   position: relative;
   min-height: 100vh;
-  padding-bottom: 100px; /* Space for hotbar */
+  background: transparent;
+}
+
+.app-container.unloaded {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.app-container.loaded {
+  opacity: 1;
+}
+
+/* Suspense fallback */
+.mc-suspense-loader {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background: transparent;
 }

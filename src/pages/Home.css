@@ -5,6 +5,7 @@
 .home-page {
     position: relative;
     overflow-x: hidden;
+    background: transparent;
 }
 
 /* Splash overlay */

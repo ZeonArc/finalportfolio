@@ -47,43 +47,43 @@ const Home = () => {
             // 1. Splash screen flash
             tl.fromTo('.mc-splash-overlay',
                 { opacity: 1 },
-                { opacity: 0, duration: 0.8, ease: 'power2.out' }
+                { opacity: 0, duration: 1, ease: 'power3.inOut' }
             )
-            // 2. Title drops in with 3D flip
+            // 2. Title drops in with refined 3D entrance
             .fromTo('.mc-big-title',
-                { y: -80, opacity: 0, rotateX: -60, scale: 1.3 },
-                { y: 0, opacity: 1, rotateX: 0, scale: 1, duration: 1.2, ease: 'elastic.out(1, 0.5)' },
-                '-=0.3'
+                { y: -60, opacity: 0, rotateX: -45, scale: 1.2, filter: 'blur(8px)' },
+                { y: 0, opacity: 1, rotateX: 0, scale: 1, filter: 'blur(0px)', duration: 1.4, ease: 'power4.out' },
+                '-=0.5'
             )
             // 3. Subtitle typewriter cursor blink starts
             .fromTo('.mc-subtitle-line',
                 { opacity: 0, clipPath: 'inset(0 100% 0 0)' },
-                { opacity: 1, clipPath: 'inset(0 0% 0 0)', duration: 0.8, ease: 'power2.out' },
-                '-=0.6'
+                { opacity: 1, clipPath: 'inset(0 0% 0 0)', duration: 1, ease: 'power3.out' },
+                '-=0.8'
             )
             // 4. Version tag slides in from left
             .fromTo('.mc-version-tag',
-                { x: -30, opacity: 0 },
-                { x: 0, opacity: 1, duration: 0.5, ease: 'power2.out' },
-                '-=0.4'
-            )
-            // 5. CTAs pop in
-            .fromTo('.hero-cta-mc .mc-btn',
-                { y: 20, opacity: 0, scale: 0.8 },
-                { y: 0, opacity: 1, scale: 1, duration: 0.5, stagger: 0.12, ease: 'back.out(2.5)' },
-                '-=0.2'
-            )
-            // 6. Player card slides in from right
-            .fromTo('.mc-player-card',
-                { x: 80, opacity: 0, rotateY: 15 },
-                { x: 0, opacity: 1, rotateY: 0, duration: 0.8, ease: 'power3.out' },
+                { x: -30, opacity: 0, filter: 'blur(4px)' },
+                { x: 0, opacity: 1, filter: 'blur(0px)', duration: 0.6, ease: 'power3.out' },
                 '-=0.5'
+            )
+            // 5. CTAs pop in with bounce
+            .fromTo('.hero-cta-mc .mc-btn',
+                { y: 25, opacity: 0, scale: 0.85 },
+                { y: 0, opacity: 1, scale: 1, duration: 0.6, stagger: 0.1, ease: 'back.out(1.8)' },
+                '-=0.3'
+            )
+            // 6. Player card slides in from right with rotation
+            .fromTo('.mc-player-card',
+                { x: 60, opacity: 0, rotateY: 10, filter: 'blur(6px)' },
+                { x: 0, opacity: 1, rotateY: 0, filter: 'blur(0px)', duration: 1, ease: 'power4.out' },
+                '-=0.6'
             )
             // 7. Splash text floating
             .fromTo('.mc-splash-text',
-                { opacity: 0, scale: 0.5, rotateZ: -5 },
-                { opacity: 1, scale: 1, rotateZ: 3, duration: 0.6, ease: 'back.out(2)' },
-                '-=0.3'
+                { opacity: 0, scale: 0.6, rotateZ: -5 },
+                { opacity: 1, scale: 1, rotateZ: 3, duration: 0.7, ease: 'back.out(1.7)' },
+                '-=0.4'
             );
 
             // Floating splash text wobble

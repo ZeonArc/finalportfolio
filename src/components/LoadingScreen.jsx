@@ -12,25 +12,29 @@ const LoadingScreen = ({ onComplete }) => {
 
         let currentProgress = 0;
         const interval = setInterval(() => {
-            currentProgress += Math.random() * 15;
-            if (currentProgress > 100) currentProgress = 100;
+            // Smooth accelerating progress curve
+            const remaining = 100 - currentProgress;
+            const increment = Math.max(1, remaining * 0.12 + Math.random() * 5);
+            currentProgress = Math.min(100, currentProgress + increment);
             setProgress(currentProgress);
 
-            if (currentProgress === 100) {
+            if (currentProgress >= 100) {
                 clearInterval(interval);
-                // Mojang style fade out
+                // Cinematic fade out with scale
                 gsap.to(containerRef.current, {
                     opacity: 0,
-                    duration: 0.8,
-                    delay: 0.5,
-                    ease: 'power2.inOut',
+                    scale: 1.05,
+                    filter: 'blur(8px)',
+                    duration: 1,
+                    delay: 0.4,
+                    ease: 'power3.inOut',
                     onComplete: () => {
                         document.body.style.overflow = 'auto';
                         onComplete();
                     }
                 });
             }
-        }, 150);
+        }, 120);
 
         return () => {
             clearInterval(interval);
@@ -42,9 +46,11 @@ const LoadingScreen = ({ onComplete }) => {
         <div className="mc-loading-screen" ref={containerRef}>
             <div className="mc-loader-content">
                 <h1 className="mc-loader-logo">Harish V</h1>
+                <p className="mc-loader-subtitle">Loading world...</p>
                 <div className="mc-loader-bar-container">
                     <div className="mc-loader-bar-fill" style={{ width: `${progress}%` }} />
                 </div>
+                <span className="mc-loader-percent">{Math.round(progress)}%</span>
             </div>
         </div>
     );

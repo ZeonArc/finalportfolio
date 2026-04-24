@@ -15,66 +15,43 @@ const navItems = [
 const Navbar = () => {
     const navRef = useRef(null);
     const slotsRef = useRef([]);
-    const indicatorRef = useRef(null);
     const { cycleTheme, themes, currentTheme } = useContext(ThemeContext);
     const location = useLocation();
     const [hovered, setHovered] = useState(null);
     const [showScrollTop, setShowScrollTop] = useState(false);
 
-    // Grand entrance animation
+    // Simple entrance — opacity only, NO transform on the fixed nav
     useEffect(() => {
         const ctx = gsap.context(() => {
+            // Fade in only — no scale/translate that would break position:fixed
             gsap.fromTo(navRef.current,
-                { y: 100, opacity: 0, scale: 0.8 },
-                { y: 0, opacity: 1, scale: 1, duration: 1, ease: 'elastic.out(1, 0.5)', delay: 0.5 }
+                { opacity: 0 },
+                { opacity: 1, duration: 0.8, ease: 'power2.out', delay: 0.5 }
             );
 
             gsap.fromTo(slotsRef.current.filter(Boolean),
-                { y: 30, opacity: 0, rotateY: -45 },
+                { opacity: 0 },
                 {
-                    y: 0, opacity: 1, rotateY: 0,
-                    duration: 0.6, stagger: 0.08,
-                    ease: 'back.out(2.5)', delay: 0.8
+                    opacity: 1,
+                    duration: 0.4, stagger: 0.08,
+                    ease: 'power2.out', delay: 0.8
                 }
             );
 
             gsap.fromTo('.mc-top-bar',
-                { y: -50, opacity: 0 },
-                { y: 0, opacity: 1, duration: 0.8, ease: 'power3.out', delay: 0.3 }
+                { opacity: 0 },
+                { opacity: 1, duration: 0.6, ease: 'power2.out', delay: 0.3 }
             );
         });
         return () => ctx.revert();
     }, []);
 
-    // Active slot animations with GSAP
+    // Active slot visual highlight (CSS classes only, no GSAP transforms)
     useEffect(() => {
-        slotsRef.current.forEach((slot, i) => {
-            if (!slot) return;
-            const isActive = navItems[i] && location.pathname === navItems[i].path;
-            if (isActive) {
-                gsap.to(slot, {
-                    scale: 1.12,
-                    y: -6,
-                    duration: 0.4,
-                    ease: 'elastic.out(1, 0.4)',
-                });
-                // Pulse the glow
-                gsap.fromTo(slot.querySelector('.slot-active-glow'),
-                    { opacity: 0, scale: 0.5 },
-                    { opacity: 1, scale: 1, duration: 0.5, ease: 'power2.out' }
-                );
-            } else {
-                gsap.to(slot, {
-                    scale: 1,
-                    y: 0,
-                    duration: 0.3,
-                    ease: 'power2.out',
-                });
-            }
-        });
+        // Just let CSS handle active state via the .active class
     }, [location.pathname]);
 
-    // Hover animations
+    // Hover animations — icon scale only (within slot, doesn't affect fixed parent)
     const handleSlotHover = (index, entering) => {
         const slot = slotsRef.current[index];
         if (!slot) return;
@@ -82,38 +59,25 @@ const Navbar = () => {
 
         if (entering && !isActive) {
             setHovered(index);
-            gsap.to(slot, { y: -4, duration: 0.2, ease: 'power2.out' });
-            gsap.to(slot.querySelector('.slot-icon'), {
-                rotateZ: 10, scale: 1.2, duration: 0.3, ease: 'back.out(3)'
-            });
             // Show tooltip
-            gsap.fromTo(slot.querySelector('.slot-tooltip'),
-                { y: 8, opacity: 0, scale: 0.8 },
-                { y: 0, opacity: 1, scale: 1, duration: 0.25, ease: 'back.out(2)' }
-            );
+            const tooltip = slot.querySelector('.slot-tooltip');
+            if (tooltip) {
+                tooltip.style.opacity = '1';
+                tooltip.style.transform = 'translateX(-50%) translateY(0)';
+            }
         } else if (!entering && !isActive) {
             setHovered(null);
-            gsap.to(slot, { y: 0, duration: 0.2, ease: 'power2.out' });
-            gsap.to(slot.querySelector('.slot-icon'), {
-                rotateZ: 0, scale: 1, duration: 0.2
-            });
-            gsap.to(slot.querySelector('.slot-tooltip'), {
-                y: 8, opacity: 0, scale: 0.8, duration: 0.15
-            });
+            const tooltip = slot.querySelector('.slot-tooltip');
+            if (tooltip) {
+                tooltip.style.opacity = '0';
+                tooltip.style.transform = 'translateX(-50%) translateY(8px)';
+            }
         }
     };
 
-    // Theme button animation
+    // Theme button
     const handleThemeCycle = () => {
         cycleTheme();
-        gsap.fromTo('.mc-theme-btn',
-            { rotateZ: 0 },
-            { rotateZ: 360, duration: 0.6, ease: 'back.out(1.5)' }
-        );
-        gsap.fromTo('.mc-biome-label',
-            { opacity: 0, x: 10 },
-            { opacity: 1, x: 0, duration: 0.4, delay: 0.2 }
-        );
     };
 
     // Scroll to top
@@ -124,7 +88,6 @@ const Navbar = () => {
     }, []);
 
     const scrollToTop = () => {
-        gsap.to(window, { scrollTo: 0, duration: 0.8, ease: 'power2.inOut' });
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 

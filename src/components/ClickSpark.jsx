@@ -3,10 +3,10 @@ import React, { useRef, useCallback } from 'react';
 const ClickSpark = ({
     children,
     sparkColor = '#4AEDD9',
-    sparkCount = 8,
-    sparkRadius = 18,
-    sparkSize = 4,
-    duration = 400,
+    sparkCount = 6,
+    sparkRadius = 15,
+    sparkSize = 3,
+    duration = 350,
 }) => {
     const canvasRef = useRef(null);
 
@@ -14,13 +14,12 @@ const ClickSpark = ({
         const canvas = canvasRef.current;
         if (!canvas) return;
 
-        const rect = canvas.getBoundingClientRect();
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
 
         const ctx = canvas.getContext('2d');
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
+        const x = e.clientX;
+        const y = e.clientY;
 
         const sparks = [];
         for (let i = 0; i < sparkCount; i++) {
@@ -28,7 +27,6 @@ const ClickSpark = ({
             sparks.push({
                 x, y, angle,
                 speed: sparkRadius * (0.5 + Math.random() * 0.5),
-                life: 1,
                 size: sparkSize * (0.5 + Math.random()),
             });
         }
@@ -48,15 +46,12 @@ const ClickSpark = ({
                 const opacity = 1 - progress;
                 const size = spark.size * (1 - progress * 0.5);
 
-                ctx.save();
                 ctx.globalAlpha = opacity;
                 ctx.fillStyle = sparkColor;
-                ctx.shadowColor = sparkColor;
-                ctx.shadowBlur = 6;
-                // Pixel-style square spark
                 ctx.fillRect(sx - size / 2, sy - size / 2, size, size);
-                ctx.restore();
             });
+
+            ctx.globalAlpha = 1;
 
             if (progress < 1) {
                 requestAnimationFrame(animate);
@@ -69,9 +64,10 @@ const ClickSpark = ({
     }, [sparkColor, sparkCount, sparkRadius, sparkSize, duration]);
 
     return (
-        <div onClick={handleClick} style={{ position: 'relative' }}>
+        <>
             <canvas
                 ref={canvasRef}
+                onClick={handleClick}
                 style={{
                     position: 'fixed',
                     top: 0,
@@ -79,11 +75,13 @@ const ClickSpark = ({
                     width: '100vw',
                     height: '100vh',
                     pointerEvents: 'none',
-                    zIndex: 9999,
+                    zIndex: 99998,
                 }}
             />
-            {children}
-        </div>
+            <div onClick={handleClick}>
+                {children}
+            </div>
+        </>
     );
 };
 

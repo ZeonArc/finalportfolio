@@ -1,40 +1,14 @@
-import React, { useEffect, useRef } from 'react';
-import gsap from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import React, { useContext } from 'react';
 import { Github, Youtube, Linkedin, Mail, Gamepad } from 'lucide-react';
+import { ThemeContext } from '../context/ThemeContext';
 import './Footer.css';
 
-gsap.registerPlugin(ScrollTrigger);
-
 const Footer = () => {
-    const footerRef = useRef(null);
-
-    useEffect(() => {
-        if (!footerRef.current) return;
-        const ctx = gsap.context(() => {
-            gsap.fromTo('.mc-footer-brand',
-                { y: 20, opacity: 0 },
-                {
-                    y: 0, opacity: 1, duration: 0.6,
-                    scrollTrigger: { trigger: footerRef.current, start: 'top 95%' }
-                }
-            );
-
-            gsap.fromTo('.mc-social-link',
-                { y: 15, opacity: 0, scale: 0.7 },
-                {
-                    y: 0, opacity: 1, scale: 1,
-                    duration: 0.4, stagger: 0.07,
-                    ease: 'back.out(2)',
-                    scrollTrigger: { trigger: footerRef.current, start: 'top 95%' }
-                }
-            );
-        }, footerRef);
-        return () => ctx.revert();
-    }, []);
+    const { currentTheme, themes } = useContext(ThemeContext);
+    const themeName = themes[currentTheme]?.name?.replace(/[^\w\s]/g, '').trim() || 'Overworld';
 
     return (
-        <footer className="mc-footer" ref={footerRef}>
+        <footer className="mc-footer">
             <div className="mc-footer-content">
                 <div className="mc-footer-brand">
                     <span className="mc-footer-logo">Harish V</span>
@@ -43,28 +17,30 @@ const Footer = () => {
 
                 <div className="mc-footer-links">
                     <a href="https://github.com/harishv2002" className="mc-social-link cursor-target" target="_blank" rel="noopener noreferrer" aria-label="GitHub">
-                        <Github size={16} />
+                        <Github size={15} />
                     </a>
                     <a href="https://www.youtube.com/@ZeonArcYT" className="mc-social-link cursor-target" target="_blank" rel="noopener noreferrer" aria-label="YouTube">
-                        <Youtube size={16} />
+                        <Youtube size={15} />
                     </a>
                     <a href="https://www.linkedin.com/in/harishvdev" className="mc-social-link cursor-target" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
-                        <Linkedin size={16} />
+                        <Linkedin size={15} />
                     </a>
                     <a href="mailto:harishvofficialwork@gmail.com" className="mc-social-link cursor-target" aria-label="Email">
-                        <Mail size={16} />
+                        <Mail size={15} />
                     </a>
                     <a href="https://zeonarc.itch.io/" className="mc-social-link cursor-target" target="_blank" rel="noopener noreferrer" aria-label="Itch.io">
-                        <Gamepad size={16} />
+                        <Gamepad size={15} />
                     </a>
                 </div>
 
+                <hr className="mc-footer-divider" />
+
                 <p className="mc-footer-copy">
-                    © {new Date().getFullYear()} ZeonArc — Crafted with ⛏️ in the Overworld
+                    © {new Date().getFullYear()} ZeonArc — Crafted with ⛏️ in the {themeName}
                 </p>
             </div>
         </footer>
     );
 };
 
-export default Footer;
+export default React.memo(Footer);

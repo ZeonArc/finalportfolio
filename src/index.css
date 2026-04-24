@@ -51,7 +51,7 @@
   font-weight: 400;
   color-scheme: dark;
   color: var(--text-color);
-  background-color: var(--bg-color);
+  background-color: transparent;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -69,7 +69,7 @@ body {
   width: 100%;
   min-height: 100vh;
   overflow-x: hidden;
-  background-color: var(--bg-color);
+  background-color: transparent;
   color: var(--text-color);
 }
 
@@ -78,7 +78,8 @@ a {
   font-weight: 500;
   color: var(--accent-color);
   text-decoration: none;
-  transition: all 0.3s ease;
+  transition: color 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+              text-shadow 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
 a:hover {
