@@ -173,9 +173,12 @@ const About = () => {
                     <div className="inv-right-section">
                         <div className="inv-description-box mc-slot">
                             <h4 className="inv-desc-title">📖 Quest Log: About Me</h4>
-                            <p className="inv-desc-text">
-                                {profile.bio || "Crafting immersive worlds and pixel perfect interactions."}
-                            </p>
+                            <div className="inv-desc-text">
+                                <p>Aspiring Game Developer with hands-on experience in Unity, C#, and AI-driven systems. I specialize in building immersive gameplay experiences, procedural systems, and intelligent interactions.</p>
+                                <p style={{ marginTop: '10px' }}>I have developed multiple projects including strategy games, procedural world systems, and AI-powered platforms. My work combines game development with modern technologies like AI, full-stack systems, and real-time rendering.</p>
+                                <p style={{ marginTop: '10px' }}>Currently seeking opportunities as a Unity Developer, Game Developer Intern, or Gameplay Programmer where I can contribute to building engaging and scalable interactive experiences.</p>
+                                <p style={{ marginTop: '10px' }}>Let’s connect and build something impactful.</p>
+                            </div>
                         </div>
 
                         <div className="inv-section-tab">
