@@ -1,50 +1,110 @@
-.site-footer {
-    padding: 3rem 10%;
-    background: var(--glass-bg, rgba(0, 0, 0, 0.3));
-    border-top: 1px solid var(--glass-border, rgba(255, 255, 255, 0.05));
-    text-align: center;
+/* ============================================
+   FOOTER — MINECRAFT BEDROCK
+   Clean, compact footer with proper spacing
+   ============================================ */
+
+.mc-footer {
     position: relative;
+    padding: 2.5rem 2rem 100px; /* 100px ensures it clears the hotbar completely */
+    background: linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.6) 100%);
+    border-top: 2px solid var(--glass-border);
+    text-align: center;
     z-index: 10;
+    margin-bottom: 0;
 }
 
-.footer-content {
+.mc-footer-content {
+    max-width: 600px;
+    margin: 0 auto;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 1.5rem;
+    gap: 1rem;
 }
 
-.footer-logo {
-    font-size: 1.5rem;
-    font-weight: 800;
-    letter-spacing: 2px;
-}
-
-.social-links {
+.mc-footer-brand {
     display: flex;
-    gap: 1.5rem;
+    align-items: center;
+    gap: 0.4rem;
 }
 
-.social-icon {
+.mc-footer-logo {
+    font-family: var(--font-pixel);
+    font-size: 0.6rem;
     color: var(--text-color);
-    opacity: 0.7;
-    transition: all 0.3s;
-    background: var(--surface-color, rgba(255, 255, 255, 0.05));
-    padding: 10px;
-    border-radius: 50%;
+    letter-spacing: 1px;
+    text-shadow: 2px 2px 0 rgba(0,0,0,0.5);
+}
+
+.mc-footer-dot {
+    color: var(--accent-color);
+    font-size: 0.5rem;
+    text-shadow: 0 0 8px var(--accent-glow);
+    animation: footerDotPulse 2s ease-in-out infinite;
+}
+
+@keyframes footerDotPulse {
+    0%, 100% { opacity: 0.5; }
+    50% { opacity: 1; }
+}
+
+.mc-footer-links {
+    display: flex;
+    gap: 0.7rem;
+}
+
+.mc-social-link {
+    width: 38px;
+    height: 38px;
     display: flex;
     align-items: center;
     justify-content: center;
+    background: linear-gradient(180deg, rgba(42,42,42,0.95) 0%, rgba(26,26,26,0.95) 100%);
+    border: 2px solid;
+    border-color: #555 #2a2a2a #2a2a2a #555;
+    color: var(--text-muted);
+    text-decoration: none;
+    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    box-shadow:
+        inset 2px 2px 0 rgba(255,255,255,0.05),
+        inset -2px -2px 0 rgba(0,0,0,0.3);
 }
 
-.social-icon:hover {
-    opacity: 1;
-    background: var(--accent-color);
-    color: black;
-    transform: translateY(-3px);
+.mc-social-link:hover {
+    border-color: var(--accent-color);
+    color: var(--accent-color);
+    box-shadow:
+        0 0 14px var(--accent-glow),
+        inset 2px 2px 0 rgba(255,255,255,0.08);
 }
 
-.copyright {
-    font-size: 0.8rem;
-    color: #666;
+.mc-footer-copy {
+    font-family: var(--font-pixel-body);
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    opacity: 0.4;
+}
+
+/* Separator line */
+.mc-footer-divider {
+    width: 60px;
+    height: 2px;
+    background: var(--glass-border);
+    border: none;
+    opacity: 0.5;
+}
+
+@media (max-width: 480px) {
+    .mc-footer {
+        padding: 2rem 1rem 1.5rem;
+    }
+
+    .mc-social-link {
+        width: 34px;
+        height: 34px;
+    }
+
+    .mc-footer-links {
+        gap: 0.5rem;
+    }
 }

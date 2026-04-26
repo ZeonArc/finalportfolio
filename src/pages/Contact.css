@@ -1,126 +1,381 @@
-.contact-page {
+/* ============================================
+   CONTACT PAGE — BOOK & QUILL UI
+   ============================================ */
+
+.mc-contact-page {
     min-height: 100vh;
-    padding: 8rem 1rem 4rem;
+    padding: 50px 1.5rem 120px;
     display: flex;
     justify-content: center;
     align-items: center;
+}
+
+/* === Book Wrapper === */
+.book-quill-wrapper {
+    display: grid;
+    grid-template-columns: 6px 1fr 1fr;
+    max-width: 950px;
+    width: 100%;
+    min-height: 580px;
+    position: relative;
+    box-shadow:
+        0 20px 60px rgba(0,0,0,0.5),
+        0 5px 20px rgba(0,0,0,0.3),
+        -4px 0 15px rgba(0,0,0,0.2);
+}
+
+/* === Book Spine === */
+.bq-spine {
+    background: linear-gradient(180deg, #8B4513 0%, #5C2E0A 50%, #8B4513 100%);
+    border-left: 2px solid #3a1a05;
+    border-right: 2px solid #3a1a05;
+    box-shadow:
+        inset 1px 0 0 rgba(255,255,255,0.1),
+        inset -1px 0 0 rgba(0,0,0,0.2);
+    z-index: 2;
+}
+
+/* === Page Base === */
+.bq-left-page,
+.bq-right-page {
+    background: linear-gradient(135deg, #f5e6c8 0%, #e8d5a8 30%, #f0dbb8 100%);
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
     position: relative;
     overflow: hidden;
+    color: #2a1a0a;
 }
 
-.contact-container {
-    max-width: 600px;
-    width: 100%;
-    position: relative;
-    z-index: 2;
-    background: var(--glass-bg, rgba(0, 0, 0, 0.4));
-    backdrop-filter: blur(10px);
-    padding: 3rem;
-    border-radius: 30px;
-    border: 1px solid var(--glass-border, rgba(255, 255, 255, 0.1));
-    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.1);
+.bq-left-page {
+    border-right: 1px solid rgba(139, 69, 19, 0.15);
+    box-shadow: inset -5px 0 15px rgba(0,0,0,0.05);
 }
 
-.contact-page h1 {
-    font-size: 3rem;
-    margin-bottom: 1rem;
-    text-align: center;
-    line-height: 1.1;
+.bq-right-page {
+    box-shadow: inset 5px 0 15px rgba(0,0,0,0.05);
 }
 
-.contact-page .highlight {
-    color: var(--accent-color);
+/* Page texture line pattern */
+.bq-left-page::before,
+.bq-right-page::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+        180deg,
+        transparent 0px,
+        transparent 28px,
+        rgba(139, 69, 19, 0.06) 28px,
+        rgba(139, 69, 19, 0.06) 29px
+    );
+    pointer-events: none;
 }
 
-.contact-subtitle {
-    text-align: center;
-    color: #ccc;
-    margin-bottom: 3rem;
+/* Aged paper edge */
+.bq-left-page::after,
+.bq-right-page::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 20px;
+    background: linear-gradient(90deg, transparent, rgba(0,0,0,0.03));
+    pointer-events: none;
 }
 
-.contact-form {
+.bq-left-page::after {
+    left: 0;
+    right: auto;
+    background: linear-gradient(270deg, transparent, rgba(0,0,0,0.03));
+}
+
+/* === Page Header === */
+.bq-page-header {
     display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.2rem;
+    padding-bottom: 0.6rem;
+    border-bottom: 1px solid rgba(139, 69, 19, 0.15);
 }
 
-.form-group {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-}
-
-.form-group label {
-    font-size: 0.9rem;
-    font-weight: 600;
-    color: var(--accent-secondary);
-}
-
-.form-group input,
-.form-group textarea {
-    padding: 1rem;
-    background: var(--surface-color, rgba(255, 255, 255, 0.05));
-    border: 1px solid var(--glass-border, rgba(255, 255, 255, 0.1));
-    border-radius: 20px;
-    color: var(--text-color);
-    font-family: inherit;
-    transition: all 0.3s;
-}
-
-.form-group input:focus,
-.form-group textarea:focus {
-    outline: none;
-    border-color: var(--accent-color);
-    background: rgba(255, 255, 255, 0.1);
-}
-
-.submit-btn {
-    margin-top: 1rem;
-    background: linear-gradient(45deg, var(--accent-color), var(--accent-secondary));
-    color: black;
-    font-weight: 700;
-    border: none;
-    padding: 1rem;
-    text-transform: uppercase;
+.bq-page-title {
+    font-family: var(--font-pixel);
+    font-size: 0.5rem;
+    color: #5C2E0A;
     letter-spacing: 1px;
 }
 
-.submit-btn:hover {
-    box-shadow: 0 0 20px var(--accent-color);
-    transform: translateY(-2px);
+.bq-page-num {
+    font-family: var(--font-pixel-body);
+    font-size: 0.85rem;
+    color: #8B6914;
+    font-style: italic;
 }
 
-/* Background Shapes */
-.contact-shape {
+/* === Left Page Content === */
+.bq-page-content {
+    flex: 1;
+}
+
+.bq-info-section h2 {
+    font-family: var(--font-pixel);
+    font-size: 0.7rem;
+    color: #3a1a0a;
+    margin-bottom: 0.6rem;
+    line-height: 1.4;
+}
+
+.bq-desc {
+    font-family: var(--font-pixel-body);
+    font-size: 1.1rem;
+    color: #5a3a1a;
+    line-height: 1.5;
+    margin-bottom: 1.5rem;
+}
+
+/* Info blocks */
+.bq-info-blocks {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    margin-bottom: 1.5rem;
+}
+
+.bq-info-block {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.5rem;
+    background: rgba(139, 69, 19, 0.06);
+    border: 1px solid rgba(139, 69, 19, 0.1);
+}
+
+.bq-info-icon {
+    font-size: 1.2rem;
+}
+
+.bq-info-block h4 {
+    font-family: var(--font-pixel);
+    font-size: 0.35rem;
+    color: #5C2E0A;
+    letter-spacing: 0.5px;
+}
+
+.bq-info-block p {
+    font-family: var(--font-pixel-body);
+    font-size: 0.95rem;
+    color: #7a5a3a;
+}
+
+/* Quests */
+.bq-quests h4 {
+    font-family: var(--font-pixel);
+    font-size: 0.4rem;
+    color: #5C2E0A;
+    margin-bottom: 0.5rem;
+    letter-spacing: 0.5px;
+}
+
+.bq-quests ul {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+}
+
+.bq-quests li {
+    font-family: var(--font-pixel-body);
+    font-size: 1rem;
+    color: #5a3a1a;
+}
+
+/* Page Footer */
+.bq-page-footer {
+    margin-top: auto;
+    padding-top: 0.8rem;
+    border-top: 1px solid rgba(139, 69, 19, 0.1);
+    font-family: 'Georgia', serif;
+    font-style: italic;
+    font-size: 0.9rem;
+    color: #8B6914;
+    text-align: right;
+}
+
+/* === Right Page — Form === */
+.bq-form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+    flex: 1;
+    position: relative;
+    z-index: 2;
+}
+
+.bq-form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.6rem;
+}
+
+.bq-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.bq-field label {
+    font-family: var(--font-pixel);
+    font-size: 0.35rem;
+    color: #5C2E0A;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+.bq-field input,
+.bq-field textarea {
+    padding: 0.6rem 0.8rem;
+    background: rgba(255, 255, 255, 0.4);
+    border: 1px solid rgba(139, 69, 19, 0.2);
+    border-bottom: 2px solid rgba(139, 69, 19, 0.15);
+    color: #2a1a0a;
+    font-family: var(--font-pixel-body);
+    font-size: 1.05rem;
+    transition: all 0.3s ease;
+}
+
+.bq-field input::placeholder,
+.bq-field textarea::placeholder {
+    color: rgba(139, 69, 19, 0.3);
+    font-style: italic;
+}
+
+.bq-field input:focus,
+.bq-field textarea:focus {
+    outline: none;
+    border-color: #8B4513;
+    background: rgba(255, 255, 255, 0.6);
+    box-shadow: 0 0 0 2px rgba(139, 69, 19, 0.1);
+}
+
+.bq-field textarea {
+    resize: none;
+    flex: 1;
+    min-height: 130px;
+}
+
+.bq-field-message {
+    flex: 1;
+    position: relative;
+}
+
+.bq-char-count {
     position: absolute;
-    border-radius: 50%;
-    filter: blur(80px);
-    z-index: 1;
-    opacity: 0.6;
+    bottom: 6px;
+    right: 8px;
+    font-family: var(--font-pixel-body);
+    font-size: 0.8rem;
+    color: rgba(139, 69, 19, 0.3);
 }
 
-.shape-1 {
-    width: 300px;
-    height: 300px;
-    background: var(--accent-color);
-    top: 10%;
-    left: 10%;
+/* Submit button */
+.bq-form-actions {
+    margin-top: 0.3rem;
 }
 
-.shape-2 {
-    width: 400px;
-    height: 400px;
-    background: var(--accent-secondary);
-    bottom: 10%;
-    right: 10%;
+.bq-submit {
+    width: 100%;
+    padding: 0.7rem;
+    font-family: var(--font-pixel);
+    font-size: 0.5rem;
+    letter-spacing: 1px;
+    background: linear-gradient(180deg, #8B4513 0%, #5C2E0A 100%);
+    color: #f5e6c8;
+    border: 2px solid;
+    border-color: #A0522D #3a1a05 #3a1a05 #A0522D;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-shadow: 1px 1px 0 rgba(0,0,0,0.3);
+    box-shadow:
+        inset 1px 1px 0 rgba(255,255,255,0.15),
+        inset -1px -1px 0 rgba(0,0,0,0.2),
+        0 3px 10px rgba(0,0,0,0.2);
 }
 
+.bq-submit:hover {
+    background: linear-gradient(180deg, #A0522D 0%, #8B4513 100%);
+    box-shadow:
+        0 4px 15px rgba(139, 69, 19, 0.4),
+        inset 1px 1px 0 rgba(255,255,255,0.15);
+    transform: translateY(-1px);
+}
+
+.bq-submit.success {
+    background: linear-gradient(180deg, #2d8b45 0%, #1a5c2e 100%);
+    border-color: #3a9e55 #1a5c2e #1a5c2e #3a9e55;
+}
+
+.bq-submit.error {
+    background: linear-gradient(180deg, #8b2020 0%, #5c0a0a 100%);
+    border-color: #a03030 #5c0a0a #5c0a0a #a03030;
+}
+
+/* XP Popup */
+.bq-xp-popup {
+    position: absolute;
+    top: 40%;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: var(--font-pixel);
+    font-size: 1rem;
+    color: #7FFF00;
+    text-shadow: 0 0 15px rgba(127, 255, 0, 0.6), 2px 2px 0 rgba(0,0,0,0.5);
+    pointer-events: none;
+    z-index: 10;
+}
+
+/* Quill decoration */
+.bq-quill {
+    position: absolute;
+    top: 8px;
+    right: 12px;
+    font-size: 1.5rem;
+    transform-origin: bottom center;
+    z-index: 5;
+    filter: drop-shadow(2px 2px 3px rgba(0,0,0,0.2));
+}
+
+/* === Responsive === */
 @media (max-width: 768px) {
-    .contact-container {
-        padding: 2rem;
+    .book-quill-wrapper {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto auto;
     }
 
-    .contact-page h1 {
-        font-size: 2rem;
+    .bq-spine {
+        display: none;
+    }
+
+    .bq-left-page {
+        border-right: none;
+        border-bottom: 2px solid rgba(139, 69, 19, 0.15);
+    }
+
+    .bq-form-row {
+        grid-template-columns: 1fr;
+    }
+
+    .mc-contact-page {
+        padding: 40px 0.8rem 120px;
+        align-items: flex-start;
+    }
+}
+
+@media (max-width: 480px) {
+    .bq-left-page,
+    .bq-right-page {
+        padding: 1rem;
     }
 }

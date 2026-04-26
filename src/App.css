@@ -1,8 +1,24 @@
-/* App specific styles */
+/* App Container — scrollable content only */
 .app-container {
-  width: 100%;
-  min-height: 100vh;
   position: relative;
-  overflow: hidden;
-  /* For local animations */
+  min-height: 100vh;
+  background: transparent;
+}
+
+.app-container.unloaded {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.app-container.loaded {
+  opacity: 1;
+}
+
+/* Suspense fallback */
+.mc-suspense-loader {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background: transparent;
 }
