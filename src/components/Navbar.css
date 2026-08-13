@@ -1,332 +1,319 @@
-/* ============================================
-   MINECRAFT HOTBAR NAVIGATION — Enhanced
-   ============================================ */
+/* ============================================================
+   NAVIGATION — top bar + bottom hotbar
+   ============================================================ */
 
-/* === Top Bar === */
-.mc-top-bar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    z-index: 100;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0.7rem 1.5rem;
-    background: linear-gradient(180deg, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.3) 60%, transparent 100%);
-    pointer-events: none;
-}
+/* ── Top bar ──────────────────────────────────────────────── */
 
-.mc-top-bar > * {
-    pointer-events: auto;
+.mc-topbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: var(--z-nav);
+  height: var(--nav-h);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-4);
+  padding-inline: var(--page-pad);
+  background: color-mix(in srgb, var(--surface-0) 88%, transparent);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-bottom: 2px solid var(--line-subtle);
 }
 
 .mc-logo {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    text-decoration: none;
-    color: var(--text-color);
-    transition: transform 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-3);
+  color: var(--text-color);
 }
 
-.mc-logo:hover {
-    transform: scale(1.05);
-    color: var(--text-color);
+.mc-logo:hover { color: var(--text-color); }
+
+/* Isometric-ish voxel mark, drawn in CSS — no asset needed */
+.mc-logo-mark {
+  width: 15px;
+  height: 15px;
+  flex-shrink: 0;
+  background: var(--accent-color);
+  box-shadow:
+    inset 3px 3px 0 rgba(255, 255, 255, 0.4),
+    inset -3px -3px 0 rgba(0, 0, 0, 0.35),
+    0 0 14px -2px var(--accent-color);
+  transition: transform var(--dur-base) var(--ease-snap);
 }
 
-.mc-logo-icon {
-    color: var(--accent-color);
-    font-size: 0.7rem;
-    text-shadow: 0 0 10px var(--accent-glow);
-    animation: pixel-pulse 2s ease-in-out infinite;
+.mc-logo:hover .mc-logo-mark {
+  transform: rotate(45deg) scale(1.1);
 }
 
 .mc-logo-text {
-    font-family: var(--font-pixel);
-    font-size: 0.65rem;
-    letter-spacing: 1px;
-    text-shadow: 2px 2px 0 rgba(0,0,0,0.9), 0 0 10px rgba(0,0,0,0.5);
+  font-family: var(--font-pixel);
+  font-size: 0.8125rem;
+  letter-spacing: 0.04em;
 }
 
-.mc-top-actions {
-    display: flex;
-    align-items: center;
-    gap: 0.8rem;
+.mc-topbar-actions {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
 }
 
-.mc-biome-label {
-    font-family: var(--font-pixel-body);
-    font-size: 1rem;
-    color: var(--text-muted);
-    letter-spacing: 0.5px;
-    text-shadow: 1px 1px 0 rgba(0,0,0,0.5);
+/* ── Biome picker ─────────────────────────────────────────── */
+
+.mc-biome-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-2);
+  padding: var(--sp-2) var(--sp-3);
+  font-size: var(--fs-micro);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
 }
 
-.mc-theme-btn {
-    width: 32px;
-    height: 32px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: linear-gradient(180deg, #3a3a3a 0%, #2a2a2a 100%);
-    border: 2px solid;
-    border-color: #666 #333 #333 #666;
-    color: var(--text-color);
-    cursor: pointer;
-    transition: all 0.3s ease;
-    padding: 0;
-    box-shadow:
-        inset 1px 1px 0 rgba(255,255,255,0.08),
-        inset -1px -1px 0 rgba(0,0,0,0.3);
+.mc-biome-btn:hover:not(:disabled) {
+  color: var(--text-color);
 }
 
-.mc-theme-btn:hover {
-    background: var(--accent-color);
-    color: #000;
-    border-color: var(--accent-color);
-    box-shadow: 0 0 15px var(--accent-glow);
+.mc-biome-name {
+  /* Hidden on narrow screens — the swatch carries the meaning */
+  display: none;
 }
 
-/* === Bottom Hotbar === */
+.mc-biome-swatch {
+  width: 11px;
+  height: 11px;
+  flex-shrink: 0;
+  box-shadow:
+    inset 2px 2px 0 rgba(255, 255, 255, 0.4),
+    inset -2px -2px 0 rgba(0, 0, 0, 0.35);
+}
+
+.mc-biome-menu {
+  position: absolute;
+  top: calc(100% + var(--sp-3));
+  right: 0;
+  z-index: var(--z-nav);
+  min-width: 188px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: var(--sp-2);
+  animation: biome-menu-in var(--dur-base) var(--ease-out);
+  transform-origin: top right;
+}
+
+@keyframes biome-menu-in {
+  from { opacity: 0; transform: translateY(-6px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.mc-biome-menu-title {
+  padding: var(--sp-2) var(--sp-2) var(--sp-3);
+  border-bottom: 2px solid var(--line-subtle);
+  margin-bottom: var(--sp-1);
+}
+
+.mc-biome-option {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  width: 100%;
+  padding: var(--sp-3);
+  font-family: var(--font-body);
+  font-size: var(--fs-body-sm);
+  letter-spacing: 0;
+  text-align: left;
+  color: var(--text-muted);
+  background: transparent;
+  border: 2px solid transparent;
+  transition:
+    background-color var(--dur-fast) var(--ease-out),
+    color var(--dur-fast) var(--ease-out);
+}
+
+.mc-biome-option:hover:not(:disabled) {
+  background: var(--surface-2);
+  color: var(--text-color);
+  box-shadow: none;
+}
+
+.mc-biome-option:active:not(:disabled) {
+  transform: none;
+  border-color: transparent;
+}
+
+.mc-biome-option.is-selected {
+  color: var(--accent-color);
+  background: color-mix(in srgb, var(--accent-color) 10%, transparent);
+}
+
+.mc-biome-option-label {
+  flex: 1;
+}
+
+/* ── Bottom hotbar ────────────────────────────────────────── */
+
 .mc-hotbar {
-    position: fixed;
-    bottom: 16px;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 1000;
-    display: flex;
-    align-items: flex-end;
-    gap: 8px;
+  position: fixed;
+  bottom: var(--sp-5);
+  left: 50%;
+  /* translateX on a fixed element is fine — it has no fixed
+     descendants that would be affected by the containing block. */
+  transform: translateX(-50%);
+  z-index: var(--z-nav);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--sp-2);
+  pointer-events: none;
 }
 
 .hotbar-frame {
-    padding: 5px;
-    background: linear-gradient(180deg,
-        rgba(48, 48, 48, 0.95) 0%,
-        rgba(28, 28, 28, 0.98) 100%
-    );
-    border: 3px solid;
-    border-color: #777 #333 #2a2a2a #777;
-    box-shadow:
-        0 10px 50px rgba(0, 0, 0, 0.7),
-        0 2px 10px rgba(0, 0, 0, 0.5),
-        inset 0 1px 0 rgba(255, 255, 255, 0.1),
-        inset 0 -2px 0 rgba(0, 0, 0, 0.6);
-    backdrop-filter: blur(10px);
+  display: flex;
+  gap: var(--sp-1);
+  padding: var(--sp-2);
+  pointer-events: auto;
 }
 
-.hotbar-container {
-    display: flex;
-    gap: 3px;
-}
-
-/* === Individual Slot === */
 .hotbar-slot {
-    position: relative;
-    width: 56px;
-    height: 56px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-decoration: none;
-    color: var(--text-muted);
-    background: linear-gradient(180deg, #2e2e2e 0%, #1c1c1c 100%);
-    border: 2px solid;
-    border-color: #4a4a4a #222 #222 #4a4a4a;
-    box-shadow:
-        inset 2px 2px 0 rgba(255,255,255,0.04),
-        inset -2px -2px 0 rgba(0,0,0,0.5);
-    transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 52px;
+  height: 52px;
+  color: var(--text-muted);
+  background: var(--surface-0);
+  border: 2px solid transparent;
+  border-top-color: var(--bevel-darker);
+  border-left-color: var(--bevel-darker);
+  border-right-color: var(--bevel-light);
+  border-bottom-color: var(--bevel-light);
+  transition:
+    color var(--dur-fast) var(--ease-out),
+    background-color var(--dur-fast) var(--ease-out),
+    border-color var(--dur-fast) var(--ease-out),
+    box-shadow var(--dur-fast) var(--ease-out);
 }
 
 .hotbar-slot:hover {
-    background: linear-gradient(180deg, #3e3e3e 0%, #2e2e2e 100%);
-    border-color: #666 #333 #333 #666;
-    color: var(--text-color);
-}
-
-.hotbar-slot.active {
-    background: linear-gradient(180deg,
-        rgba(74, 237, 217, 0.12) 0%,
-        rgba(74, 237, 217, 0.04) 100%
-    );
-    border-color: var(--accent-color);
-    color: var(--accent-color);
-    box-shadow:
-        0 0 18px var(--accent-glow),
-        0 -4px 12px rgba(74, 237, 217, 0.1),
-        inset 2px 2px 0 rgba(255,255,255,0.08),
-        inset -2px -2px 0 rgba(0,0,0,0.2);
-}
-
-.slot-inner {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0;
-    position: relative;
-    z-index: 2;
+  color: var(--text-color);
+  background: var(--surface-2);
 }
 
 .slot-icon {
-    transition: filter 0.3s ease;
+  transition: transform var(--dur-base) var(--ease-snap);
 }
 
-.hotbar-slot.active .slot-icon {
-    filter: drop-shadow(0 0 6px var(--accent-glow));
+.hotbar-slot:hover .slot-icon {
+  transform: translateY(-2px);
 }
 
 .slot-number {
-    position: absolute;
-    top: -10px;
-    right: -6px;
-    font-family: var(--font-pixel);
-    font-size: 0.4rem;
-    color: rgba(255, 255, 255, 0.2);
-    text-shadow: 1px 1px 0 rgba(0,0,0,0.9);
+  position: absolute;
+  top: 2px;
+  right: 4px;
+  font-family: var(--font-pixel);
+  font-size: 0.5rem;
+  color: var(--text-muted);
+  opacity: 0.5;
+}
+
+/* Active slot — the selected-item highlight from the real hotbar */
+.hotbar-slot.active {
+  color: var(--accent-color);
+  background: var(--surface-2);
+  border-color: var(--accent-color);
+  box-shadow:
+    0 0 0 2px var(--accent-glow),
+    0 0 22px -6px var(--accent-color),
+    inset 0 0 22px -14px var(--accent-color);
 }
 
 .hotbar-slot.active .slot-number {
-    color: var(--accent-color);
-    text-shadow: 0 0 6px var(--accent-glow);
+  color: var(--accent-color);
+  opacity: 1;
 }
 
-/* Active label below slot */
-.slot-active-label {
-    position: absolute;
-    bottom: -18px;
-    left: 50%;
-    transform: translateX(-50%);
-    font-family: var(--font-pixel);
-    font-size: 0.35rem;
-    color: var(--accent-color);
-    white-space: nowrap;
-    text-shadow: 0 0 6px var(--accent-glow), 1px 1px 0 rgba(0,0,0,0.9);
-    letter-spacing: 0.5px;
-}
-
-/* === Minecraft Tooltip === */
+/* Tooltip — pure CSS, no imperative DOM writes */
 .slot-tooltip {
-    position: absolute;
-    bottom: calc(100% + 12px);
-    left: 50%;
-    transform: translateX(-50%) translateY(8px);
-    background: rgba(16, 0, 24, 0.95);
-    border: 2px solid;
-    border-color: #5a2d82 #28007a #28007a #5a2d82;
-    padding: 4px 10px;
-    font-family: var(--font-pixel-body);
-    font-size: 1rem;
-    color: #fff;
-    white-space: nowrap;
-    pointer-events: none;
-    opacity: 0;
-    z-index: 200;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.5);
-    transition: opacity 0.2s ease, transform 0.2s ease;
+  bottom: calc(100% + var(--sp-3));
+  left: 50%;
+  transform: translateX(-50%) translateY(6px);
+  opacity: 0;
+  transition:
+    opacity var(--dur-fast) var(--ease-out),
+    transform var(--dur-fast) var(--ease-out);
 }
 
-.slot-tooltip::after {
-    content: '';
-    position: absolute;
-    bottom: -6px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 0;
-    height: 0;
-    border-left: 5px solid transparent;
-    border-right: 5px solid transparent;
-    border-top: 6px solid #28007a;
+.hotbar-slot:hover .slot-tooltip,
+.hotbar-slot:focus-visible .slot-tooltip {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
 }
 
-/* === Active Glow === */
-.slot-active-glow {
-    position: absolute;
-    inset: -6px;
-    background: radial-gradient(circle, var(--accent-glow) 0%, transparent 65%);
-    z-index: 0;
-    animation: slot-glow-breathe 2.5s ease-in-out infinite;
-    pointer-events: none;
+.hotbar-hint {
+  pointer-events: none;
+  opacity: 0.4;
+  font-size: 0.5rem;
 }
 
-@keyframes slot-glow-breathe {
-    0%, 100% { opacity: 0.25; transform: scale(0.95); }
-    50% { opacity: 0.5; transform: scale(1.05); }
-}
+/* ── Scroll to top ────────────────────────────────────────── */
 
-/* === Scroll to Top === */
 .mc-scroll-top {
-    width: 36px;
-    height: 36px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: linear-gradient(180deg, #3a3a3a 0%, #2a2a2a 100%);
-    border: 2px solid;
-    border-color: #666 #333 #333 #666;
-    color: var(--text-muted);
-    cursor: pointer;
-    padding: 0;
-    transition: all 0.3s ease;
-    animation: block-place 0.4s ease;
-    box-shadow:
-        inset 1px 1px 0 rgba(255,255,255,0.08),
-        inset -1px -1px 0 rgba(0,0,0,0.3);
+  position: fixed;
+  right: var(--page-pad);
+  bottom: calc(var(--hotbar-h) + var(--sp-4));
+  z-index: var(--z-sticky);
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  padding: 0;
+  color: var(--text-muted);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(10px);
+  transition:
+    opacity var(--dur-base) var(--ease-out),
+    transform var(--dur-base) var(--ease-out),
+    visibility var(--dur-base),
+    color var(--dur-fast) var(--ease-out);
 }
 
-.mc-scroll-top:hover {
-    border-color: var(--accent-color);
-    color: var(--accent-color);
-    box-shadow: 0 0 12px var(--accent-glow);
-    transform: translateY(-2px);
+.mc-scroll-top.is-visible {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
 }
 
-/* === Responsive === */
-@media (max-width: 600px) {
-    .mc-hotbar {
-        bottom: 8px;
-    }
-
-    .hotbar-frame {
-        padding: 3px;
-    }
-
-    .hotbar-slot {
-        width: 48px;
-        height: 48px;
-    }
-
-    .slot-icon {
-        width: 16px;
-        height: 16px;
-    }
-
-    .slot-active-label {
-        font-size: 0.3rem;
-        bottom: -14px;
-    }
-
-    .mc-logo-text {
-        font-size: 0.55rem;
-    }
-
-    .mc-biome-label {
-        display: none;
-    }
-
-    .mc-top-bar {
-        padding: 0.5rem 0.8rem;
-    }
+.mc-scroll-top:hover:not(:disabled) {
+  color: var(--accent-color);
 }
 
-@media (max-width: 380px) {
-    .hotbar-slot {
-        width: 42px;
-        height: 42px;
-    }
+/* ── Responsive ───────────────────────────────────────────── */
 
-    .hotbar-container {
-        gap: 2px;
-    }
+@media (min-width: 560px) {
+  .mc-biome-name { display: inline; }
+}
+
+@media (max-width: 560px) {
+  .hotbar-slot {
+    width: 46px;
+    height: 46px;
+  }
+
+  .mc-logo-text { font-size: 0.6875rem; }
+
+  .hotbar-hint { display: none; }
+
+  .mc-scroll-top {
+    width: 38px;
+    height: 38px;
+  }
 }

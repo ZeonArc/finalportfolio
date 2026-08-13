@@ -1,8 +1,17 @@
-/* App Container — scrollable content only */
+/* ============================================================
+   APP SHELL
+   ------------------------------------------------------------
+   Only the scrollable content lives here. The cursor, voxel
+   background, and navigation are siblings outside this
+   container so nothing can break their position: fixed.
+   ============================================================ */
+
 .app-container {
   position: relative;
+  z-index: var(--z-content);
   min-height: 100vh;
   background: transparent;
+  transition: opacity var(--dur-slow) var(--ease-out);
 }
 
 .app-container.unloaded {
@@ -14,11 +23,25 @@
   opacity: 1;
 }
 
-/* Suspense fallback */
+/* Route-level Suspense fallback */
 .mc-suspense-loader {
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 100vh;
+  min-height: 70vh;
   background: transparent;
+}
+
+/* Vignette — pulls focus to content over the busy 3D backdrop */
+.app-container::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse at center,
+    transparent 45%,
+    rgba(0, 0, 0, 0.45) 100%
+  );
 }

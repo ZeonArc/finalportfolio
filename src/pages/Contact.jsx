@@ -1,201 +1,242 @@
 import React, { useEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import {
+    Mail, MapPin, Clock, Send, Check, AlertCircle,
+    Github, Linkedin, Gamepad2,
+} from 'lucide-react';
 import { supabase } from '../supabaseClient';
-import SplitText from '../components/SplitText';
 import GlitchText from '../components/GlitchText';
 import './Contact.css';
 
-gsap.registerPlugin(ScrollTrigger);
+const MESSAGE_LIMIT = 500;
+
+const EMPTY_FORM = { name: '', email: '', subject: '', message: '' };
+
+const DETAILS = [
+    { Icon: MapPin, label: 'Location', value: 'India · Remote friendly' },
+    { Icon: Clock, label: 'Response time', value: 'Within 24 hours' },
+    { Icon: Mail, label: 'Email', value: 'harishvofficialwork@gmail.com', href: 'mailto:harishvofficialwork@gmail.com' },
+];
+
+const SOCIALS = [
+    { Icon: Github, label: 'GitHub', href: 'https://github.com/harishv2002' },
+    { Icon: Linkedin, label: 'LinkedIn', href: 'https://www.linkedin.com/in/harishvdev' },
+    { Icon: Gamepad2, label: 'itch.io', href: 'https://zeonarc.itch.io/' },
+];
+
+const INTERESTS = [
+    'Gameplay programming roles',
+    'Unity development contracts',
+    'Game jams and collaborations',
+    'Open-source contributions',
+];
 
 const Contact = () => {
     const pageRef = useRef(null);
-    const bookRef = useRef(null);
-    const [formData, setFormData] = useState({ name: '', email: '', subject: '', message: '' });
-    const [status, setStatus] = useState('');
-    const [xpGained, setXpGained] = useState(false);
-    const [charCount, setCharCount] = useState(0);
+    const [formData, setFormData] = useState(EMPTY_FORM);
+    const [status, setStatus] = useState('idle');
+    const [errorMsg, setErrorMsg] = useState('');
 
     useEffect(() => {
         const ctx = gsap.context(() => {
-            // Book opening animation
-            gsap.fromTo('.book-quill-wrapper',
-                { rotateY: -90, opacity: 0, transformOrigin: 'left center' },
-                { rotateY: 0, opacity: 1, duration: 1.2, ease: 'power3.out', delay: 0.3 }
+            gsap.fromTo('.contact-header > *',
+                { y: 18, opacity: 0 },
+                { y: 0, opacity: 1, duration: 0.5, stagger: 0.08, ease: 'power3.out', delay: 0.15 }
             );
-
-            gsap.fromTo('.bq-left-page',
-                { x: -30, opacity: 0 },
-                { x: 0, opacity: 1, duration: 0.8, delay: 0.8, ease: 'power2.out' }
+            gsap.fromTo('.contact-page-left',
+                { x: -20, opacity: 0 },
+                { x: 0, opacity: 1, duration: 0.6, ease: 'power3.out', delay: 0.3 }
             );
-
-            gsap.fromTo('.bq-right-page',
-                { x: 30, opacity: 0 },
-                { x: 0, opacity: 1, duration: 0.8, delay: 1, ease: 'power2.out' }
-            );
-
-            gsap.fromTo('.bq-quill',
-                { y: -20, opacity: 0, rotateZ: -15 },
-                { y: 0, opacity: 1, rotateZ: 0, duration: 0.6, delay: 1.3, ease: 'back.out(2)' }
+            gsap.fromTo('.contact-page-right',
+                { x: 20, opacity: 0 },
+                { x: 0, opacity: 1, duration: 0.6, ease: 'power3.out', delay: 0.4 }
             );
         }, pageRef);
         return () => ctx.revert();
     }, []);
 
     const handleChange = (e) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
-        if (e.target.name === 'message') setCharCount(e.target.value.length);
+        const { name, value } = e.target;
+        setFormData((prev) => ({ ...prev, [name]: value }));
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setStatus('sending');
+        if (status === 'sending') return;
 
-        // Quill writing animation
-        gsap.to('.bq-quill', {
-            rotateZ: -5, y: -3, duration: 0.15, yoyo: true, repeat: 5, ease: 'power1.inOut'
-        });
+        setStatus('sending');
+        setErrorMsg('');
 
         try {
             const { error } = await supabase.from('messages').insert([formData]);
             if (error) throw error;
 
             setStatus('success');
-            setXpGained(true);
-            setFormData({ name: '', email: '', subject: '', message: '' });
-            setCharCount(0);
+            setFormData(EMPTY_FORM);
 
-            // Success: page glow
-            gsap.fromTo('.book-quill-wrapper',
-                { boxShadow: '0 0 0 rgba(23, 221, 98, 0)' },
-                { boxShadow: '0 0 40px rgba(23, 221, 98, 0.3)', duration: 0.5, yoyo: true, repeat: 1 }
+            gsap.fromTo('.contact-page-right',
+                { boxShadow: '0 0 0 rgba(0,0,0,0)' },
+                {
+                    boxShadow: '0 0 40px -8px var(--accent-color)',
+                    duration: 0.45, yoyo: true, repeat: 1, ease: 'power2.inOut',
+                }
             );
 
-            // XP popup float
-            gsap.fromTo('.bq-xp-popup',
-                { y: 0, opacity: 1, scale: 1 },
-                { y: -80, opacity: 0, scale: 1.5, duration: 2, ease: 'power2.out', delay: 0.2 }
-            );
-
-            setTimeout(() => { setXpGained(false); setStatus(''); }, 3500);
-        } catch (error) {
-            console.error('Error:', error);
+            setTimeout(() => setStatus('idle'), 4000);
+        } catch (err) {
+            console.error('Message send failed:', err);
+            setErrorMsg(err?.message || 'Something went wrong. Please try again or email me directly.');
             setStatus('error');
-            gsap.to('.book-quill-wrapper', {
-                x: -5, duration: 0.05, yoyo: true, repeat: 5, ease: 'power1.inOut'
-            });
-            setTimeout(() => setStatus(''), 3000);
+            gsap.fromTo('.contact-page-right',
+                { x: 0 },
+                { x: -6, duration: 0.06, yoyo: true, repeat: 5, ease: 'power1.inOut', clearProps: 'x' }
+            );
         }
     };
 
+    const charCount = formData.message.length;
+    const sending = status === 'sending';
+
     return (
-        <div className="mc-contact-page" ref={pageRef}>
-            {/* Book & Quill Container */}
-            <div className="book-quill-wrapper" ref={bookRef} style={{ perspective: '1200px' }}>
-                {/* Book Spine */}
-                <div className="bq-spine" />
+        <div className="contact-page mc-page" ref={pageRef}>
 
-                {/* Left Page — Info */}
-                <div className="bq-left-page">
-                    <div className="bq-page-header">
-                        <span className="bq-page-title">📖 <GlitchText speed={45}>Ender Mail</GlitchText></span>
-                        <span className="bq-page-num">Page 1</span>
-                    </div>
-                    <div className="bq-page-content">
-                        <div className="bq-info-section">
-                            <h2><SplitText delay={1.2} stagger={0.04}>Send a Message</SplitText></h2>
-                            <p className="bq-desc">
-                                Write your message in this enchanted book. 
-                                It will be delivered through the Ender Mail system directly to my inbox.
-                            </p>
-                        </div>
+            {/* ═══ HEADER ═══ */}
+            <header className="contact-header">
+                <span className="mc-label">
+                    <Mail size={12} aria-hidden="true" /> Contact
+                </span>
+                <h1 className="contact-title">
+                    <GlitchText speed={38}>Get in touch</GlitchText>
+                </h1>
+                <p className="contact-sub">
+                    Open to gameplay programming roles, freelance work, and collaborations.
+                </p>
+            </header>
 
-                        <div className="bq-info-blocks">
-                            <div className="bq-info-block">
-                                <span className="bq-info-icon">🌐</span>
-                                <div>
-                                    <h4>Server</h4>
-                                    <p>India 🇮🇳</p>
-                                </div>
-                            </div>
-                            <div className="bq-info-block">
-                                <span className="bq-info-icon">⚡</span>
-                                <div>
-                                    <h4>Response</h4>
-                                    <p>&lt; 24 hours</p>
-                                </div>
-                            </div>
-                            <div className="bq-info-block">
-                                <span className="bq-info-icon">🎮</span>
-                                <div>
-                                    <h4>Status</h4>
-                                    <p>Online ●</p>
-                                </div>
-                            </div>
-                        </div>
+            {/* ═══ BOOK SPREAD ═══ */}
+            <div className="contact-book mc-panel">
+                <span className="contact-spine" aria-hidden="true" />
 
-                        <div className="bq-quests">
-                            <h4>✦ Preferred Quests</h4>
-                            <ul>
-                                <li>⚔️ Game Development</li>
-                                <li>🌐 Web Applications</li>
-                                <li>🎨 Creative Projects</li>
-                                <li>🤝 Open Source</li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div className="bq-page-footer">
-                        <span>— Harish V</span>
-                    </div>
-                </div>
+                {/* Left page — details */}
+                <section className="contact-page-left">
+                    <h2 className="panel-heading">Details</h2>
 
-                {/* Right Page — Form */}
-                <div className="bq-right-page">
-                    <div className="bq-page-header">
-                        <span className="bq-page-title">✍️ <GlitchText speed={45}>Compose</GlitchText></span>
-                        <span className="bq-page-num">Page 2</span>
+                    <ul className="contact-details">
+                        {DETAILS.map(({ Icon, label, value, href }) => (
+                            <li key={label} className="detail-row">
+                                <span className="detail-icon mc-inset">
+                                    <Icon size={15} aria-hidden="true" />
+                                </span>
+                                <span className="detail-text">
+                                    <span className="detail-label mc-micro">{label}</span>
+                                    {href
+                                        ? <a href={href} className="detail-value cursor-target">{value}</a>
+                                        : <span className="detail-value">{value}</span>}
+                                </span>
+                            </li>
+                        ))}
+                    </ul>
+
+                    <div className="contact-block">
+                        <h3 className="contact-block-title">Open to</h3>
+                        <ul className="interest-list">
+                            {INTERESTS.map((item) => (
+                                <li key={item}>
+                                    <span className="interest-marker" aria-hidden="true" />
+                                    {item}
+                                </li>
+                            ))}
+                        </ul>
                     </div>
 
-                    <form className="bq-form" onSubmit={handleSubmit}>
-                        <div className="bq-form-row">
-                            <div className="bq-field">
-                                <label>Player Name</label>
-                                <input type="text" name="name" required placeholder="Steve..." value={formData.name} onChange={handleChange} />
+                    <div className="contact-block">
+                        <h3 className="contact-block-title">Elsewhere</h3>
+                        <div className="contact-socials">
+                            {SOCIALS.map(({ Icon, label, href }) => (
+                                <a
+                                    key={label}
+                                    href={href}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="social-btn cursor-target"
+                                    aria-label={label}
+                                >
+                                    <Icon size={16} aria-hidden="true" />
+                                </a>
+                            ))}
+                        </div>
+                    </div>
+                </section>
+
+                {/* Right page — form */}
+                <section className="contact-page-right">
+                    <h2 className="panel-heading">Send a message</h2>
+
+                    <form className="contact-form" onSubmit={handleSubmit} noValidate={false}>
+                        <div className="form-row">
+                            <div className="form-field">
+                                <label htmlFor="cf-name">Name</label>
+                                <input
+                                    id="cf-name" name="name" type="text" required
+                                    placeholder="Your name"
+                                    value={formData.name} onChange={handleChange}
+                                    disabled={sending} autoComplete="name"
+                                />
                             </div>
-                            <div className="bq-field">
-                                <label>Ender Mail</label>
-                                <input type="email" name="email" required placeholder="steve@end.net" value={formData.email} onChange={handleChange} />
+                            <div className="form-field">
+                                <label htmlFor="cf-email">Email</label>
+                                <input
+                                    id="cf-email" name="email" type="email" required
+                                    placeholder="you@example.com"
+                                    value={formData.email} onChange={handleChange}
+                                    disabled={sending} autoComplete="email"
+                                />
                             </div>
                         </div>
 
-                        <div className="bq-field">
-                            <label>Subject</label>
-                            <input type="text" name="subject" required placeholder="Quest title..." value={formData.subject} onChange={handleChange} />
+                        <div className="form-field">
+                            <label htmlFor="cf-subject">Subject</label>
+                            <input
+                                id="cf-subject" name="subject" type="text" required
+                                placeholder="What is this about?"
+                                value={formData.subject} onChange={handleChange}
+                                disabled={sending}
+                            />
                         </div>
 
-                        <div className="bq-field bq-field-message">
-                            <label>Message</label>
-                            <textarea name="message" rows="8" required placeholder="Dear adventurer..." value={formData.message} onChange={handleChange} />
-                            <span className="bq-char-count">{charCount}/500</span>
+                        <div className="form-field">
+                            <div className="field-head">
+                                <label htmlFor="cf-message">Message</label>
+                                <span className={`char-count ${charCount > MESSAGE_LIMIT * 0.9 ? 'is-near-limit' : ''}`}>
+                                    {charCount}/{MESSAGE_LIMIT}
+                                </span>
+                            </div>
+                            <textarea
+                                id="cf-message" name="message" rows="7" required
+                                maxLength={MESSAGE_LIMIT}
+                                placeholder="Tell me about the role, project, or idea…"
+                                value={formData.message} onChange={handleChange}
+                                disabled={sending}
+                            />
                         </div>
 
-                        <div className="bq-form-actions">
-                            <button type="submit" className={`bq-submit ${status}`} disabled={status === 'sending'}>
-                                {status === 'sending' ? '⏳ Enchanting...' :
-                                 status === 'success' ? '✅ Sent!' :
-                                 status === 'error' ? '❌ Try Again' :
-                                 '📨 Sign & Send'}
-                            </button>
-                        </div>
+                        <button
+                            type="submit"
+                            className={`mc-btn mc-btn-primary form-submit cursor-target is-${status}`}
+                            disabled={sending}
+                        >
+                            {status === 'sending' && <><span className="btn-spinner" aria-hidden="true" /> Sending</>}
+                            {status === 'success' && <><Check size={14} aria-hidden="true" /> Message sent</>}
+                            {status === 'error' && <><AlertCircle size={14} aria-hidden="true" /> Try again</>}
+                            {status === 'idle' && <><Send size={14} aria-hidden="true" /> Send message</>}
+                        </button>
+
+                        <p className="form-status" role="status" aria-live="polite">
+                            {status === 'success' && 'Thanks — I will get back to you within 24 hours.'}
+                            {status === 'error' && errorMsg}
+                        </p>
                     </form>
-
-                    {xpGained && (
-                        <div className="bq-xp-popup">+50 XP ✨</div>
-                    )}
-
-                    {/* Quill decoration */}
-                    <div className="bq-quill">🪶</div>
-                </div>
+                </section>
             </div>
         </div>
     );

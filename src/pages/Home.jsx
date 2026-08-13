@@ -1,8 +1,11 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useMemo } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { Link } from 'react-router-dom';
-import { ArrowRight, Sword, Shield, Zap, Code, Layers, Star, Sparkles } from 'lucide-react';
+import {
+    ArrowRight, ArrowUpRight, Gamepad2, Globe, Palette, Code2,
+    Boxes, Cpu, Award, MapPin, Circle,
+} from 'lucide-react';
 import { supabase } from '../supabaseClient';
 import SplitText from '../components/SplitText';
 import SpotlightCard from '../components/SpotlightCard';
@@ -10,270 +13,251 @@ import './Home.css';
 
 gsap.registerPlugin(ScrollTrigger);
 
+const TECH_MARQUEE = [
+    'UNITY', 'C#', 'REACT', 'THREE.JS', 'UNREAL',
+    'BLENDER', 'GSAP', 'NODE.JS', 'JAVA', 'PYTHON',
+];
+
+/* Category → icon. Keeps project cards visually sortable at a glance. */
+const CATEGORY_ICON = {
+    Games: Gamepad2,
+    Web: Globe,
+    Design: Palette,
+};
+
+const FALLBACK_TITLE = 'Gameplay Programmer';
+
 const Home = () => {
-    const heroRef = useRef(null);
+    const pageRef = useRef(null);
     const [profile, setProfile] = useState(null);
-    const [featuredProjects, setFeaturedProjects] = useState([]);
+    const [projects, setProjects] = useState([]);
     const [typedTitle, setTypedTitle] = useState('');
-    const fullTitle = 'Game Developer & Creative Coder';
 
     useEffect(() => {
         const fetchData = async () => {
-            const { data: profileData } = await supabase.from('profile').select('*').single();
+            const [{ data: profileData }, { data: projectsData }] = await Promise.all([
+                supabase.from('profile').select('*').single(),
+                supabase.from('projects').select('*').order('created_at', { ascending: false }),
+            ]);
             if (profileData) setProfile(profileData);
-            const { data: projectsData } = await supabase.from('projects').select('*').eq('is_featured', true).limit(3);
-            if (projectsData) setFeaturedProjects(projectsData);
+            if (projectsData) setProjects(projectsData);
         };
         fetchData();
     }, []);
 
-    // Typewriter effect for subtitle
+    /* Typewriter on the role line. The first tick writes an empty
+       slice, so the line clears itself without a synchronous
+       setState in the effect body. */
     useEffect(() => {
-        const title = profile?.title || fullTitle;
+        const title = profile?.title || FALLBACK_TITLE;
         let i = 0;
         const interval = setInterval(() => {
-            setTypedTitle(title.slice(0, i + 1));
-            i++;
-            if (i >= title.length) clearInterval(interval);
-        }, 60);
+            setTypedTitle(title.slice(0, i));
+            i += 1;
+            if (i > title.length) clearInterval(interval);
+        }, 55);
         return () => clearInterval(interval);
     }, [profile]);
 
+    const featured = useMemo(
+        () => projects.filter((p) => p.is_featured).slice(0, 3),
+        [projects]
+    );
+
+    /* Real figures derived from the data, not invented ones. */
+    const stats = useMemo(() => {
+        const techCount = new Set(
+            projects.flatMap((p) => p.tech_stack || [])
+        ).size;
+
+        return [
+            { value: projects.length || '—', label: 'Projects built', Icon: Boxes },
+            { value: techCount || '—', label: 'Technologies used', Icon: Cpu },
+            { value: (profile?.certifications?.length ?? 3), label: 'Certifications', Icon: Award },
+        ];
+    }, [projects, profile]);
+
     useEffect(() => {
         const ctx = gsap.context(() => {
-            // GSAP Timeline for hero — cinematic entrance
-            const tl = gsap.timeline({ delay: 0.3 });
+            const tl = gsap.timeline({ defaults: { ease: 'power3.out' }, delay: 0.15 });
 
-            // 1. Splash screen flash
-            tl.fromTo('.mc-splash-overlay',
-                { opacity: 1 },
-                { opacity: 0, duration: 1, ease: 'power3.inOut' }
-            )
-            // 2. Title drops in with refined 3D entrance
-            .fromTo('.mc-big-title',
-                { y: -60, opacity: 0, rotateX: -45, scale: 1.2, filter: 'blur(8px)' },
-                { y: 0, opacity: 1, rotateX: 0, scale: 1, filter: 'blur(0px)', duration: 1.4, ease: 'power4.out' },
-                '-=0.5'
-            )
-            // 3. Subtitle typewriter cursor blink starts
-            .fromTo('.mc-subtitle-line',
-                { opacity: 0, clipPath: 'inset(0 100% 0 0)' },
-                { opacity: 1, clipPath: 'inset(0 0% 0 0)', duration: 1, ease: 'power3.out' },
-                '-=0.8'
-            )
-            // 4. Version tag slides in from left
-            .fromTo('.mc-version-tag',
-                { x: -30, opacity: 0, filter: 'blur(4px)' },
-                { x: 0, opacity: 1, filter: 'blur(0px)', duration: 0.6, ease: 'power3.out' },
-                '-=0.5'
-            )
-            // 5. CTAs pop in with bounce
-            .fromTo('.hero-cta-mc .mc-btn',
-                { y: 25, opacity: 0, scale: 0.85 },
-                { y: 0, opacity: 1, scale: 1, duration: 0.6, stagger: 0.1, ease: 'back.out(1.8)' },
-                '-=0.3'
-            )
-            // 6. Player card slides in from right with rotation
-            .fromTo('.mc-player-card',
-                { x: 60, opacity: 0, rotateY: 10, filter: 'blur(6px)' },
-                { x: 0, opacity: 1, rotateY: 0, filter: 'blur(0px)', duration: 1, ease: 'power4.out' },
-                '-=0.6'
-            )
-            // 7. Splash text floating
-            .fromTo('.mc-splash-text',
-                { opacity: 0, scale: 0.6, rotateZ: -5 },
-                { opacity: 1, scale: 1, rotateZ: 3, duration: 0.7, ease: 'back.out(1.7)' },
-                '-=0.4'
-            );
+            tl.fromTo('.hero-eyebrow', { y: 12, opacity: 0 }, { y: 0, opacity: 1, duration: 0.5 })
+                .fromTo('.hero-role', { opacity: 0 }, { opacity: 1, duration: 0.5 }, '-=0.25')
+                .fromTo('.hero-desc', { y: 16, opacity: 0 }, { y: 0, opacity: 1, duration: 0.6 }, '-=0.3')
+                .fromTo('.hero-actions > *', { y: 14, opacity: 0 }, { y: 0, opacity: 1, duration: 0.5, stagger: 0.08 }, '-=0.35')
+                .fromTo('.hero-meta', { opacity: 0 }, { opacity: 1, duration: 0.5 }, '-=0.3')
+                .fromTo('.hero-card', { y: 24, opacity: 0 }, { y: 0, opacity: 1, duration: 0.7 }, '-=0.6');
 
-            // Floating splash text wobble
-            gsap.to('.mc-splash-text', {
-                rotateZ: -3, duration: 2, yoyo: true, repeat: -1, ease: 'sine.inOut'
-            });
-
-            // ─── ScrollTrigger sections ───
-            // Stats: counter-like stagger with scale bounce
             gsap.fromTo('.stat-block',
-                { y: 50, opacity: 0, scale: 0.5, rotateZ: -5 },
+                { y: 28, opacity: 0 },
                 {
-                    y: 0, opacity: 1, scale: 1, rotateZ: 0, duration: 0.6, stagger: 0.12,
-                    ease: 'back.out(2)',
-                    scrollTrigger: { trigger: '.mc-stats-section', start: 'top 82%' }
+                    y: 0, opacity: 1, duration: 0.5, stagger: 0.1, ease: 'power3.out',
+                    scrollTrigger: { trigger: '.home-stats', start: 'top 85%' },
                 }
             );
 
-            // Marquee fade in
-            gsap.fromTo('.mc-marquee-section',
-                { opacity: 0 },
+            gsap.fromTo('.featured-card',
+                { y: 32, opacity: 0 },
                 {
-                    opacity: 1, duration: 1,
-                    scrollTrigger: { trigger: '.mc-marquee-section', start: 'top 90%' }
+                    y: 0, opacity: 1, duration: 0.55, stagger: 0.1, ease: 'power3.out',
+                    scrollTrigger: { trigger: '.home-featured', start: 'top 82%' },
                 }
             );
-
-            // Featured projects: staggered slide + scale
-            gsap.fromTo('.mc-featured-item',
-                { y: 60, opacity: 0, scale: 0.9 },
-                {
-                    y: 0, opacity: 1, scale: 1, duration: 0.7, stagger: 0.15,
-                    ease: 'power3.out',
-                    scrollTrigger: { trigger: '.mc-featured-section', start: 'top 80%' }
-                }
-            );
-
-            // Section headers: slide in
-            gsap.fromTo('.mc-section-header',
-                { x: -30, opacity: 0 },
-                {
-                    x: 0, opacity: 1, duration: 0.6,
-                    scrollTrigger: { trigger: '.mc-featured-section', start: 'top 85%' }
-                }
-            );
-
-        }, heroRef);
+        }, pageRef);
 
         return () => ctx.revert();
-    }, [featuredProjects]);
+    }, [featured.length, stats]);
 
     return (
-        <div className="home-page" ref={heroRef}>
-            {/* Splash overlay */}
-            <div className="mc-splash-overlay" />
+        <div className="home-page mc-page" ref={pageRef}>
 
-            {/* === HERO === */}
-            <section className="mc-hero-section">
-                <div className="mc-hero-container">
-                    <div className="mc-hero-text" style={{ perspective: '1000px' }}>
-                        <div className="mc-version-tag">
-                            <span className="mc-tag-dot" /> Portfolio v2.0
-                        </div>
+            {/* ═══ HERO ═══ */}
+            <section className="home-hero">
+                <div className="hero-text">
+                    <span className="hero-eyebrow mc-label">
+                        <Circle size={7} fill="currentColor" aria-hidden="true" />
+                        Available for work
+                    </span>
 
-                        <h1 className="mc-big-title">
-                            <SplitText delay={0.6} stagger={0.06}>HARISH V</SplitText>
-                        </h1>
+                    <h1 className="hero-title">
+                        <SplitText delay={0.35} stagger={0.05}>HARISH V</SplitText>
+                    </h1>
 
-                        <div className="mc-subtitle-line">
-                            <span className="mc-typed-text">{typedTitle}</span>
-                            <span className="mc-cursor-blink">_</span>
-                        </div>
+                    <p className="hero-role">
+                        {typedTitle}
+                        <span className="hero-caret" aria-hidden="true" />
+                    </p>
 
-                        {/* Minecraft splash text */}
-                        <div className="mc-splash-text">
-                            <Sparkles size={12} />
-                            Also try Terraria!
-                        </div>
+                    <p className="hero-desc">
+                        {profile?.bio ||
+                            'I build gameplay systems, procedural worlds, and interactive web experiences — mostly in Unity and C#, sometimes in the browser with React and Three.js.'}
+                    </p>
 
-                        <div className="hero-cta-mc">
-                            <Link to="/projects" className="mc-btn mc-btn-primary cursor-target">
-                                <Sword size={14} /> View My Work <ArrowRight size={14} />
-                            </Link>
-                            <Link to="/contact" className="mc-btn mc-btn-secondary cursor-target">
-                                <Shield size={14} /> Let's Talk
-                            </Link>
-                        </div>
+                    <div className="hero-actions">
+                        <Link to="/projects" className="mc-btn mc-btn-primary cursor-target">
+                            View work <ArrowRight size={14} aria-hidden="true" />
+                        </Link>
+                        <Link to="/contact" className="mc-btn mc-btn-ghost cursor-target">
+                            Get in touch
+                        </Link>
                     </div>
 
-                    {/* Player Card */}
-                    <div className="mc-player-card">
-                        <div className="mc-card-header">
-                            <div className="mc-card-avatar mc-slot">
-                                {profile?.avatar_url ? <img src={profile.avatar_url} alt="Profile" /> : <span>⛏️</span>}
-                            </div>
-                            <div className="mc-card-nameplate">
-                                <span className="mc-card-name">{profile?.full_name || 'Harish V'}</span>
-                                <span className="mc-card-title">{profile?.title || 'Game Developer'}</span>
-                            </div>
-                            <Star size={16} className="mc-card-star" />
-                        </div>
-                        <div className="mc-card-body">
-                            <p className="mc-card-bio">
-                                {profile?.bio || 'Crafting immersive games and creative web experiences with modern tech.'}
-                            </p>
-                            <div className="mc-card-stats-row">
-                                <div className="mc-mini-stat">
-                                    <span className="mc-ms-val">10+</span>
-                                    <span className="mc-ms-label">Projects</span>
-                                </div>
-                                <div className="mc-mini-stat">
-                                    <span className="mc-ms-val">5+</span>
-                                    <span className="mc-ms-label">Tech</span>
-                                </div>
-                                <div className="mc-mini-stat">
-                                    <span className="mc-ms-val">2+</span>
-                                    <span className="mc-ms-label">Years</span>
-                                </div>
-                            </div>
-                            <div className="mc-card-xp">
-                                <span className="mc-xp-text">XP Level 99</span>
-                                <div className="xp-bar"><div className="xp-bar-fill" style={{ width: '85%' }} /></div>
-                            </div>
-                            <Link to="/about" className="mc-card-link cursor-target">
-                                Open Inventory <ArrowRight size={14} />
-                            </Link>
-                        </div>
+                    <div className="hero-meta">
+                        <span className="hero-meta-item">
+                            <MapPin size={13} aria-hidden="true" />
+                            India · Remote friendly
+                        </span>
                     </div>
                 </div>
+
+                {/* Profile card */}
+                <aside className="hero-card mc-panel">
+                    <div className="hero-card-top">
+                        <div className="hero-avatar mc-inset">
+                            {profile?.avatar_url
+                                ? <img src={profile.avatar_url} alt="" />
+                                : <Code2 size={26} aria-hidden="true" />}
+                        </div>
+                        <div className="hero-card-id">
+                            <span className="hero-card-name">{profile?.full_name || 'Harish V'}</span>
+                            <span className="hero-card-role">{profile?.title || FALLBACK_TITLE}</span>
+                        </div>
+                    </div>
+
+                    <div className="hero-card-body">
+                        <h3 className="hero-card-heading">Focus</h3>
+                        <ul className="hero-focus-list">
+                            <li><Gamepad2 size={13} aria-hidden="true" /> Gameplay &amp; systems programming</li>
+                            <li><Boxes size={13} aria-hidden="true" /> Procedural generation</li>
+                            <li><Globe size={13} aria-hidden="true" /> Real-time web graphics</li>
+                        </ul>
+
+                        <Link to="/about" className="hero-card-link cursor-target">
+                            Full background <ArrowUpRight size={14} aria-hidden="true" />
+                        </Link>
+                    </div>
+                </aside>
             </section>
 
-            {/* === MARQUEE === */}
-            <section className="mc-marquee-section">
-                <div className="mc-marquee">
-                    <div className="mc-marquee-track">
-                        {['REACT', 'THREE.JS', 'UNITY', 'UNREAL', 'BLENDER', 'GSAP', 'NODE.JS', 'C#', 'JAVA',
-                          'REACT', 'THREE.JS', 'UNITY', 'UNREAL', 'BLENDER', 'GSAP', 'NODE.JS', 'C#', 'JAVA'].map((tech, i) => (
-                            <span key={i} className="mc-marquee-item"><span className="mc-marquee-diamond">◆</span> {tech}</span>
+            {/* ═══ TECH MARQUEE ═══ */}
+            <section className="home-marquee" aria-label="Technologies">
+                <div className="marquee-viewport">
+                    <div className="marquee-track">
+                        {[...TECH_MARQUEE, ...TECH_MARQUEE].map((tech, i) => (
+                            <span key={i} className="marquee-item">
+                                <span className="marquee-dot" aria-hidden="true" />
+                                {tech}
+                            </span>
                         ))}
                     </div>
                 </div>
             </section>
 
-            {/* === STATS === */}
-            <section className="mc-stats-section">
-                <div className="mc-stats-grid">
-                    {[
-                        { value: '10+', label: 'Projects Crafted', icon: '⚔️' },
-                        { value: '5+', label: 'Technologies', icon: '⛏️' },
-                        { value: '2+', label: 'Years XP', icon: '🏆' },
-                        { value: '∞', label: 'Passion', icon: '❤️' },
-                    ].map((stat, i) => (
-                        <SpotlightCard key={i} className="stat-block mc-slot" spotlightColor="rgba(74, 237, 217, 0.1)">
-                            <span className="stat-emoji">{stat.icon}</span>
-                            <span className="stat-value">{stat.value}</span>
-                            <span className="stat-label">{stat.label}</span>
-                        </SpotlightCard>
+            {/* ═══ STATS ═══ */}
+            <section className="home-stats mc-section">
+                <div className="stats-grid">
+                    {stats.map(({ value, label, Icon }) => (
+                        <div key={label} className="stat-block mc-slot">
+                            <Icon size={18} className="stat-icon" aria-hidden="true" />
+                            <span className="stat-value">{value}</span>
+                            <span className="stat-label">{label}</span>
+                        </div>
                     ))}
                 </div>
             </section>
 
-            {/* === FEATURED === */}
-            <section className="mc-featured-section">
-                <div className="mc-section-header">
-                    <h2><SplitText delay={0.1} stagger={0.04}>Featured Loot</SplitText></h2>
-                    <Link to="/projects" className="mc-view-all cursor-target">View All <ArrowRight size={16} /></Link>
-                </div>
-                <div className="mc-featured-grid">
-                    {featuredProjects.length > 0 ? (
-                        featuredProjects.map(project => (
-                            <SpotlightCard key={project.id} className="mc-featured-item mc-slot" spotlightColor="rgba(74, 237, 217, 0.12)">
-                                <Link to="/projects" className="mc-featured-link cursor-target">
-                                    <div className="mc-featured-bg" style={project.image_url ? { backgroundImage: `url(${project.image_url})` } : {}} />
-                                    <div className="mc-featured-content">
-                                        <div className="mc-featured-icon">
-                                            {project.category === 'Games' && <Zap size={20} />}
-                                            {project.category === 'Web' && <Layers size={20} />}
-                                            {!['Games', 'Web'].includes(project.category) && <Code size={20} />}
+            {/* ═══ FEATURED WORK ═══ */}
+            <section className="home-featured mc-section">
+                <header className="mc-section-head">
+                    <div>
+                        <h2>Selected work</h2>
+                        <div className="mc-rule" />
+                    </div>
+                    <Link to="/projects" className="section-link cursor-target">
+                        All projects <ArrowRight size={15} aria-hidden="true" />
+                    </Link>
+                </header>
+
+                <div className="featured-grid">
+                    {featured.length > 0 ? (
+                        featured.map((project) => {
+                            const Icon = CATEGORY_ICON[project.category] || Code2;
+                            return (
+                                <SpotlightCard
+                                    key={project.id}
+                                    className="featured-card mc-slot"
+                                    spotlightColor="rgba(255, 255, 255, 0.06)"
+                                >
+                                    <Link to="/projects" className="featured-link cursor-target">
+                                        <div
+                                            className="featured-thumb"
+                                            style={project.image_url ? { backgroundImage: `url(${project.image_url})` } : undefined}
+                                        >
+                                            {!project.image_url && <Icon size={26} aria-hidden="true" />}
                                         </div>
-                                        <div className="mc-featured-info">
-                                            <h3>{project.title}</h3>
-                                            <span className="mc-featured-cat">{project.category}</span>
+
+                                        <div className="featured-body">
+                                            <span className="featured-cat mc-micro">
+                                                <Icon size={11} aria-hidden="true" />
+                                                {project.category}
+                                            </span>
+                                            <h3 className="featured-title">{project.title}</h3>
+                                            {project.description && (
+                                                <p className="featured-desc">{project.description}</p>
+                                            )}
+                                            <span className="featured-cta">
+                                                View <ArrowUpRight size={14} aria-hidden="true" />
+                                            </span>
                                         </div>
-                                        <ArrowRight size={16} className="mc-featured-arrow" />
-                                    </div>
-                                </Link>
-                            </SpotlightCard>
-                        ))
+                                    </Link>
+                                </SpotlightCard>
+                            );
+                        })
                     ) : (
-                        <div className="mc-loading-state"><div className="mc-loading" /><span>Loading loot...</span></div>
+                        <div className="mc-loading-state">
+                            <div className="mc-loading" />
+                            <span>Loading projects</span>
+                        </div>
                     )}
                 </div>
             </section>

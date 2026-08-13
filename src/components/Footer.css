@@ -1,110 +1,152 @@
-/* ============================================
-   FOOTER — MINECRAFT BEDROCK
-   Clean, compact footer with proper spacing
-   ============================================ */
+/* ============================================================
+   FOOTER
+   ============================================================ */
 
 .mc-footer {
-    position: relative;
-    padding: 2.5rem 2rem 100px; /* 100px ensures it clears the hotbar completely */
-    background: linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.6) 100%);
-    border-top: 2px solid var(--glass-border);
-    text-align: center;
-    z-index: 10;
-    margin-bottom: 0;
+  position: relative;
+  margin-top: var(--sp-24);
+  padding-bottom: calc(var(--hotbar-h) + var(--sp-8));
+  background: linear-gradient(
+    to bottom,
+    transparent,
+    color-mix(in srgb, var(--surface-0) 85%, transparent) 30%
+  );
+  border-top: 2px solid var(--line-subtle);
 }
 
-.mc-footer-content {
-    max-width: 600px;
-    margin: 0 auto;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 1rem;
+.mc-footer-inner {
+  width: 100%;
+  max-width: var(--page-max);
+  margin-inline: auto;
+  padding: var(--sp-16) var(--page-pad) 0;
 }
+
+.mc-footer-grid {
+  display: grid;
+  grid-template-columns: 1.6fr 1fr 1fr;
+  gap: var(--sp-12);
+  padding-bottom: var(--sp-12);
+}
+
+/* ── Brand ────────────────────────────────────────────────── */
 
 .mc-footer-brand {
-    display: flex;
-    align-items: center;
-    gap: 0.4rem;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-4);
+  max-width: 44ch;
 }
 
 .mc-footer-logo {
-    font-family: var(--font-pixel);
-    font-size: 0.6rem;
-    color: var(--text-color);
-    letter-spacing: 1px;
-    text-shadow: 2px 2px 0 rgba(0,0,0,0.5);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-3);
+  font-family: var(--font-pixel);
+  font-size: 0.9375rem;
+  letter-spacing: 0.04em;
+  color: var(--text-color);
 }
 
-.mc-footer-dot {
-    color: var(--accent-color);
-    font-size: 0.5rem;
-    text-shadow: 0 0 8px var(--accent-glow);
-    animation: footerDotPulse 2s ease-in-out infinite;
+.mc-footer-tagline {
+  font-size: var(--fs-body-sm);
+  line-height: 1.7;
+  color: var(--text-muted);
 }
 
-@keyframes footerDotPulse {
-    0%, 100% { opacity: 0.5; }
-    50% { opacity: 1; }
+/* ── Columns ──────────────────────────────────────────────── */
+
+.mc-footer-col {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-4);
 }
 
-.mc-footer-links {
-    display: flex;
-    gap: 0.7rem;
+.mc-footer-heading {
+  font-family: var(--font-pixel);
+  font-size: var(--fs-micro);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent-color);
 }
 
-.mc-social-link {
-    width: 38px;
-    height: 38px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: linear-gradient(180deg, rgba(42,42,42,0.95) 0%, rgba(26,26,26,0.95) 100%);
-    border: 2px solid;
-    border-color: #555 #2a2a2a #2a2a2a #555;
-    color: var(--text-muted);
-    text-decoration: none;
-    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-    box-shadow:
-        inset 2px 2px 0 rgba(255,255,255,0.05),
-        inset -2px -2px 0 rgba(0,0,0,0.3);
+.mc-footer-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
 }
 
-.mc-social-link:hover {
-    border-color: var(--accent-color);
-    color: var(--accent-color);
-    box-shadow:
-        0 0 14px var(--accent-glow),
-        inset 2px 2px 0 rgba(255,255,255,0.08);
+.mc-footer-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-2);
+  font-family: var(--font-body);
+  font-size: var(--fs-body-sm);
+  color: var(--text-muted);
+  transition:
+    color var(--dur-fast) var(--ease-out),
+    transform var(--dur-fast) var(--ease-out);
 }
 
-.mc-footer-copy {
-    font-family: var(--font-pixel-body);
-    font-size: 0.9rem;
-    color: var(--text-muted);
-    opacity: 0.4;
+.mc-footer-link:hover {
+  color: var(--accent-color);
+  transform: translateX(3px);
 }
 
-/* Separator line */
-.mc-footer-divider {
-    width: 60px;
-    height: 2px;
-    background: var(--glass-border);
-    border: none;
-    opacity: 0.5;
+.mc-footer-social svg {
+  flex-shrink: 0;
+  opacity: 0.7;
+  transition: opacity var(--dur-fast) var(--ease-out);
 }
 
-@media (max-width: 480px) {
-    .mc-footer {
-        padding: 2rem 1rem 1.5rem;
-    }
+.mc-footer-social:hover svg { opacity: 1; }
 
-    .mc-social-link {
-        width: 34px;
-        height: 34px;
-    }
+/* ── Bottom strip ─────────────────────────────────────────── */
 
-    .mc-footer-links {
-        gap: 0.5rem;
-    }
+.mc-footer-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-4);
+  flex-wrap: wrap;
+  padding-block: var(--sp-5);
+  border-top: 2px solid var(--line-subtle);
+}
+
+.mc-footer-copy,
+.mc-footer-meta {
+  font-family: var(--font-pixel);
+  font-size: var(--fs-micro);
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+}
+
+.mc-footer-meta {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-2);
+  text-transform: uppercase;
+}
+
+/* ── Responsive ───────────────────────────────────────────── */
+
+@media (max-width: 780px) {
+  .mc-footer-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: var(--sp-10);
+  }
+
+  .mc-footer-brand {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 460px) {
+  .mc-footer-grid {
+    grid-template-columns: 1fr;
+    gap: var(--sp-8);
+  }
+
+  .mc-footer-bottom {
+    justify-content: flex-start;
+  }
 }

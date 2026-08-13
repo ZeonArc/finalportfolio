@@ -1,11 +1,12 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useMemo } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { Download, Briefcase, GraduationCap, Code, Loader, Award, Heart, Shield, Sword } from 'lucide-react';
+import {
+    Download, Briefcase, GraduationCap, Award, Code2,
+    Github, ExternalLink, Wrench, Sparkles,
+} from 'lucide-react';
 import { supabase } from '../supabaseClient';
-import SplitText from '../components/SplitText';
 import GlitchText from '../components/GlitchText';
-import SpotlightCard from '../components/SpotlightCard';
 import ImageModal from '../components/ImageModal';
 import ProfileCard from '../components/ProfileCard/ProfileCard';
 import mainAvatar from '../assets/Untitled (2).png';
@@ -13,18 +14,29 @@ import './About.css';
 
 gsap.registerPlugin(ScrollTrigger);
 
+/* Proficiency for headline skills. Read from `profile.skill_levels`
+   when that column exists so it stays editable in Supabase; this is
+   the fallback. Values are self-assessed, not invented stats. */
+const DEFAULT_SKILL_LEVELS = [
+    { name: 'Unity', level: 85 },
+    { name: 'C#', level: 80 },
+    { name: 'React', level: 75 },
+    { name: 'Python', level: 70 },
+    { name: 'Three.js', level: 65 },
+    { name: 'Blender', level: 55 },
+];
+
+const DEFAULT_CERTS = [
+    { title: 'Unity Associate Game Developer', issuer: 'Unity', date: 'April 2026', imageUrl: '' },
+    { title: 'Game Design Fundamentals', issuer: 'Epic Games', date: 'January 2026', imageUrl: '' },
+    { title: 'Product Management Simulation', issuer: 'Electronic Arts', date: 'January 2026', imageUrl: '' },
+];
+
 const About = () => {
     const pageRef = useRef(null);
     const [profile, setProfile] = useState(null);
     const [loading, setLoading] = useState(true);
     const [selectedCert, setSelectedCert] = useState(null);
-    const [hoveredSkill, setHoveredSkill] = useState(null);
-
-    const defaultCerts = [
-        { title: "Unity Associate Game Developer", issuer: "Unity", date: "April 2026", imageUrl: "" },
-        { title: "Epic Games Game Design", issuer: "Epic Games", date: "Jan 2026", imageUrl: "" },
-        { title: "Product Management Job Simulation", issuer: "Electronic Arts", date: "Jan 2026", imageUrl: "" },
-    ];
 
     useEffect(() => {
         const fetchProfile = async () => {
@@ -35,245 +47,291 @@ const About = () => {
         fetchProfile();
     }, []);
 
+    const skillLevels = useMemo(
+        () => (profile?.skill_levels?.length ? profile.skill_levels : DEFAULT_SKILL_LEVELS),
+        [profile]
+    );
+
+    const certs = useMemo(
+        () => (profile?.certifications?.length ? profile.certifications : DEFAULT_CERTS),
+        [profile]
+    );
+
+    const skillCategories = useMemo(
+        () => (profile?.skills ? Object.entries(profile.skills) : []),
+        [profile]
+    );
+
     useEffect(() => {
-        if (!loading && profile && pageRef.current) {
-            const ctx = gsap.context(() => {
-                // Inventory opening animation
-                gsap.fromTo('.inv-container',
-                    { scale: 0.8, opacity: 0, y: 30 },
-                    { scale: 1, opacity: 1, y: 0, duration: 0.8, ease: 'back.out(1.5)', delay: 0.3 }
-                );
+        if (loading) return;
 
-                // Player model entrance
-                gsap.fromTo('.inv-player-section',
-                    { x: -40, opacity: 0 },
-                    { x: 0, opacity: 1, duration: 0.7, delay: 0.6, ease: 'power2.out' }
-                );
+        const ctx = gsap.context(() => {
+            gsap.fromTo('.about-header > *',
+                { y: 18, opacity: 0 },
+                { y: 0, opacity: 1, duration: 0.5, stagger: 0.08, ease: 'power3.out', delay: 0.15 }
+            );
 
-                // Equipment slots
-                gsap.fromTo('.inv-equip-slot',
-                    { scale: 0, rotateZ: -10 },
-                    { scale: 1, rotateZ: 0, duration: 0.4, stagger: 0.08, delay: 0.8, ease: 'back.out(2.5)' }
-                );
+            gsap.fromTo('.about-aside',
+                { y: 24, opacity: 0 },
+                { y: 0, opacity: 1, duration: 0.6, ease: 'power3.out', delay: 0.3 }
+            );
 
-                // Skill items
-                gsap.fromTo('.inv-skill-item',
-                    { y: 15, opacity: 0 },
+            gsap.fromTo('.about-main > *',
+                { y: 24, opacity: 0 },
+                { y: 0, opacity: 1, duration: 0.55, stagger: 0.1, ease: 'power3.out', delay: 0.4 }
+            );
+
+            /* Meters fill from zero when scrolled into view */
+            gsap.utils.toArray('.skill-meter-fill').forEach((el) => {
+                const target = el.dataset.level;
+                gsap.fromTo(el,
+                    { width: '0%' },
                     {
-                        y: 0, opacity: 1, duration: 0.3, stagger: 0.03, ease: 'power2.out',
-                        scrollTrigger: { trigger: '.inv-skills-grid', start: 'top 85%' }
+                        width: `${target}%`,
+                        duration: 1,
+                        ease: 'power3.out',
+                        scrollTrigger: { trigger: el, start: 'top 92%' },
                     }
                 );
+            });
 
-                // Timeline items
-                gsap.fromTo('.inv-quest-item',
-                    { x: -20, opacity: 0 },
-                    {
-                        x: 0, opacity: 1, duration: 0.5, stagger: 0.12, ease: 'power2.out',
-                        scrollTrigger: { trigger: '.inv-quest-log', start: 'top 85%' }
-                    }
-                );
+            gsap.fromTo('.timeline-item',
+                { x: -16, opacity: 0 },
+                {
+                    x: 0, opacity: 1, duration: 0.5, stagger: 0.12, ease: 'power3.out',
+                    scrollTrigger: { trigger: '.about-timeline', start: 'top 85%' },
+                }
+            );
 
-                // Achievement unlock
-                gsap.fromTo('.inv-achievement',
-                    { scale: 0.5, opacity: 0 },
-                    {
-                        scale: 1, opacity: 1, duration: 0.4, stagger: 0.08, ease: 'back.out(2)',
-                        scrollTrigger: { trigger: '.inv-achievements', start: 'top 85%' }
-                    }
-                );
-            }, pageRef);
-            return () => ctx.revert();
-        }
-    }, [loading, profile]);
+            gsap.fromTo('.cert-card',
+                { y: 20, opacity: 0 },
+                {
+                    y: 0, opacity: 1, duration: 0.45, stagger: 0.08, ease: 'power3.out',
+                    scrollTrigger: { trigger: '.about-certs', start: 'top 85%' },
+                }
+            );
+        }, pageRef);
+
+        return () => ctx.revert();
+    }, [loading, skillLevels, certs]);
 
     if (loading) {
         return (
-            <div className="mc-about-page" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <div className="about-page mc-page about-loading">
                 <div className="mc-loading" />
             </div>
         );
     }
-    if (!profile) return <div className="mc-about-page"><p>Profile not found.</p></div>;
 
-    const certsToRender = profile.certifications || defaultCerts;
-    const skillCategories = profile.skills ? Object.entries(profile.skills) : [];
+    const name = profile?.full_name || 'Harish V';
+    const role = profile?.title || 'Gameplay Programmer';
 
     return (
-        <div className="mc-about-page" ref={pageRef}>
-            {/* === INVENTORY WINDOW === */}
-            <div className="inv-container">
-                {/* Title Bar */}
-                <div className="inv-title-bar">
-                    <span className="inv-title">⚔️ <GlitchText speed={50}>Player Inventory</GlitchText></span>
-                    <span className="inv-title-sub">{profile.full_name}</span>
-                </div>
+        <div className="about-page mc-page" ref={pageRef}>
 
-                {/* Main Inventory Grid */}
-                <div className="inv-main">
-                    {/* Left: Player Model + Equipment */}
-                    {/* Left: Profile Card Wrapper */}
-                    <div className="inv-player-section">
-                        <div className="inv-player-model">
-                            <ProfileCard 
-                                image={mainAvatar}
-                                name={profile.full_name || "Harish V"}
-                                role={profile.title || "Game Developer"}
-                                bio="" 
-                                socialLinks={
-                                    <>
-                                        {profile.github_url && <a href={profile.github_url} target="_blank" rel="noreferrer" className="mc-slot-action cursor-target"><Code size={14}/></a>}
-                                        {profile.resume_url && <a href={profile.resume_url} target="_blank" rel="noreferrer" className="mc-slot-action cursor-target"><Download size={14}/></a>}
-                                    </>
-                                }
-                            />
-                        </div>
+            {/* ═══ HEADER ═══ */}
+            <header className="about-header">
+                <span className="mc-label">
+                    <Sparkles size={12} aria-hidden="true" /> About
+                </span>
+                <h1 className="about-title">
+                    <GlitchText speed={38}>{name}</GlitchText>
+                </h1>
+                <p className="about-role">{role}</p>
+            </header>
 
-                        {/* Player Stats */}
-                        <div className="inv-player-stats">
-                            <div className="inv-stat-row">
-                                <Heart size={14} className="inv-stat-icon heart" />
-                                <span className="inv-stat-name">HP</span>
-                                <div className="inv-stat-bar">
-                                    <div className="inv-stat-fill hp" style={{ width: '100%' }} />
-                                </div>
-                                <span className="inv-stat-val">20/20</span>
-                            </div>
-                            <div className="inv-stat-row">
-                                <Shield size={14} className="inv-stat-icon armor" />
-                                <span className="inv-stat-name">DEF</span>
-                                <div className="inv-stat-bar">
-                                    <div className="inv-stat-fill armor" style={{ width: '80%' }} />
-                                </div>
-                                <span className="inv-stat-val">16</span>
-                            </div>
-                            <div className="inv-stat-row">
-                                <Sword size={14} className="inv-stat-icon attack" />
-                                <span className="inv-stat-name">ATK</span>
-                                <div className="inv-stat-bar">
-                                    <div className="inv-stat-fill attack" style={{ width: '90%' }} />
-                                </div>
-                                <span className="inv-stat-val">18</span>
-                            </div>
-                            <div className="inv-xp-section">
-                                <span className="inv-xp-label">XP Level 99</span>
-                                <div className="xp-bar"><div className="xp-bar-fill" style={{ width: '85%' }} /></div>
-                            </div>
-                        </div>
+            <div className="about-layout">
 
-                        {/* Resume button */}
-                        {profile.resume_url && (
-                            <a href={profile.resume_url} target="_blank" rel="noopener noreferrer" className="inv-resume-btn cursor-target">
-                                <Download size={14} /> Download Resume
-                            </a>
-                        )}
-                    </div>
+                {/* ═══ ASIDE ═══ */}
+                <aside className="about-aside">
+                    <ProfileCard
+                        image={mainAvatar}
+                        name={name}
+                        role={role}
+                        bio=""
+                        socialLinks={
+                            <>
+                                {profile?.github_url && (
+                                    <a href={profile.github_url} target="_blank" rel="noreferrer" className="cursor-target" aria-label="GitHub">
+                                        <Github size={15} aria-hidden="true" />
+                                    </a>
+                                )}
+                                {profile?.resume_url && (
+                                    <a href={profile.resume_url} target="_blank" rel="noreferrer" className="cursor-target" aria-label="Resume">
+                                        <ExternalLink size={15} aria-hidden="true" />
+                                    </a>
+                                )}
+                            </>
+                        }
+                    />
 
-                    {/* Right: Inventory Slots (Skills) */}
-                    <div className="inv-right-section">
-                        <div className="inv-description-box mc-slot">
-                            <h4 className="inv-desc-title">📖 Quest Log: About Me</h4>
-                            <div className="inv-desc-text">
-                                <p>Aspiring Game Developer with hands-on experience in Unity, C#, and AI-driven systems. I specialize in building immersive gameplay experiences, procedural systems, and intelligent interactions.</p>
-                                <p style={{ marginTop: '10px' }}>I have developed multiple projects including strategy games, procedural world systems, and AI-powered platforms. My work combines game development with modern technologies like AI, full-stack systems, and real-time rendering.</p>
-                                <p style={{ marginTop: '10px' }}>Currently seeking opportunities as a Unity Developer, Game Developer Intern, or Gameplay Programmer where I can contribute to building engaging and scalable interactive experiences.</p>
-                                <p style={{ marginTop: '10px' }}>Let’s connect and build something impactful.</p>
-                            </div>
-                        </div>
+                    {/* Core competencies — real skills, real levels */}
+                    <section className="skill-panel mc-panel">
+                        <h2 className="panel-heading">
+                            <Wrench size={13} aria-hidden="true" /> Core competencies
+                        </h2>
 
-                        <div className="inv-section-tab">
-                            <Code size={14} /> Enchantments (Skills)
-                        </div>
-                        <div className="inv-skills-grid">
-                            {skillCategories.map(([category, items], catIdx) => (
-                                <div className="inv-skill-category" key={catIdx}>
-                                    <h4 className="inv-cat-label">{category}</h4>
-                                    <div className="inv-skill-slots">
-                                        {items.map((skill, sIdx) => (
-                                            <div
-                                                className="inv-skill-item mc-slot enchanted cursor-target"
-                                                key={sIdx}
-                                                onMouseEnter={() => setHoveredSkill(`${catIdx}-${sIdx}`)}
-                                                onMouseLeave={() => setHoveredSkill(null)}
-                                            >
-                                                <span className="inv-skill-name">{skill}</span>
-                                                {hoveredSkill === `${catIdx}-${sIdx}` && (
-                                                    <div className="inv-skill-tooltip mc-tooltip">
-                                                        <span style={{ color: '#C77DFF' }}>{skill}</span><br />
-                                                        <span style={{ color: '#aaa', fontSize: '0.9rem' }}>Enchantment Level V</span>
-                                                    </div>
-                                                )}
-                                            </div>
-                                        ))}
+                        <ul className="skill-list">
+                            {skillLevels.map((skill) => (
+                                <li key={skill.name} className="skill-row">
+                                    <div className="skill-row-head">
+                                        <span className="skill-name">{skill.name}</span>
+                                        <span className="skill-pct">{skill.level}%</span>
                                     </div>
-                                </div>
+                                    <div className="mc-meter">
+                                        <div
+                                            className="mc-meter-fill skill-meter-fill"
+                                            data-level={skill.level}
+                                            style={{ width: `${skill.level}%` }}
+                                        />
+                                    </div>
+                                </li>
                             ))}
+                        </ul>
+                    </section>
+
+                    {profile?.resume_url && (
+                        <a
+                            href={profile.resume_url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="mc-btn mc-btn-primary about-resume cursor-target"
+                        >
+                            <Download size={14} aria-hidden="true" /> Download résumé
+                        </a>
+                    )}
+                </aside>
+
+                {/* ═══ MAIN ═══ */}
+                <div className="about-main">
+
+                    {/* Bio */}
+                    <section className="about-bio mc-panel">
+                        <h2 className="panel-heading">
+                            <Code2 size={13} aria-hidden="true" /> Background
+                        </h2>
+                        <div className="bio-text">
+                            <p>
+                                I am a game developer with hands-on experience in Unity, C#, and
+                                AI-driven systems, focused on building immersive gameplay,
+                                procedural systems, and intelligent interactions.
+                            </p>
+                            <p>
+                                My work spans strategy games, procedural world generation, and
+                                AI-powered platforms — combining game development with real-time
+                                rendering and full-stack engineering.
+                            </p>
+                            <p>
+                                I am currently looking for Unity developer, gameplay programmer,
+                                or game development internship roles where I can help ship
+                                engaging, scalable interactive experiences.
+                            </p>
                         </div>
-                    </div>
-                </div>
+                    </section>
 
-                {/* === QUEST LOG (Experience) === */}
-                <div className="inv-quest-log">
-                    <div className="inv-section-tab">
-                        <Briefcase size={14} /> Quest Log (Experience)
-                    </div>
-                    <div className="inv-quest-items">
-                        {profile.experience && profile.experience.map((job, idx) => (
-                            <div className="inv-quest-item mc-slot" key={idx}>
-                                <div className="inv-quest-status">
-                                    <span className="inv-quest-check">✅</span>
-                                </div>
-                                <div className="inv-quest-info">
-                                    <span className="inv-quest-period">{job.period}</span>
-                                    <h4 className="inv-quest-title">{job.title}</h4>
-                                    <span className="inv-quest-company">{job.company}</span>
-                                    <p className="inv-quest-desc">{job.description}</p>
-                                </div>
+                    {/* Toolkit */}
+                    {skillCategories.length > 0 && (
+                        <section className="about-toolkit mc-panel">
+                            <h2 className="panel-heading">
+                                <Sparkles size={13} aria-hidden="true" /> Toolkit
+                            </h2>
+                            <div className="toolkit-groups">
+                                {skillCategories.map(([category, items]) => (
+                                    <div key={category} className="toolkit-group">
+                                        <h3 className="toolkit-label">{category}</h3>
+                                        <ul className="toolkit-tags">
+                                            {items.map((skill, i) => (
+                                                <li key={i} className="toolkit-tag">{skill}</li>
+                                            ))}
+                                        </ul>
+                                    </div>
+                                ))}
                             </div>
-                        ))}
-                    </div>
-                </div>
+                        </section>
+                    )}
 
-                {/* === EDUCATION === */}
-                <div className="inv-education">
-                    <div className="inv-section-tab">
-                        <GraduationCap size={14} /> Knowledge
-                    </div>
-                    <div className="inv-edu-item mc-slot">
-                        <span className="inv-edu-icon">📚</span>
-                        <div>
-                            <h4>B.Tech in Computer Science and Engineering</h4>
-                            <p>SRM Institute of Science and Technology, Trichy • 2027</p>
+                    {/* Experience */}
+                    {profile?.experience?.length > 0 && (
+                        <section className="about-timeline mc-panel">
+                            <h2 className="panel-heading">
+                                <Briefcase size={13} aria-hidden="true" /> Experience
+                            </h2>
+                            <ol className="timeline">
+                                {profile.experience.map((job, i) => (
+                                    <li key={i} className="timeline-item">
+                                        <span className="timeline-marker" aria-hidden="true" />
+                                        <div className="timeline-body">
+                                            <span className="timeline-period mc-micro">{job.period}</span>
+                                            <h3 className="timeline-title">{job.title}</h3>
+                                            <span className="timeline-company">{job.company}</span>
+                                            {job.description && <p className="timeline-desc">{job.description}</p>}
+                                        </div>
+                                    </li>
+                                ))}
+                            </ol>
+                        </section>
+                    )}
+
+                    {/* Education */}
+                    <section className="about-education mc-panel">
+                        <h2 className="panel-heading">
+                            <GraduationCap size={13} aria-hidden="true" /> Education
+                        </h2>
+                        <div className="edu-item">
+                            <div className="edu-icon mc-inset">
+                                <GraduationCap size={18} aria-hidden="true" />
+                            </div>
+                            <div>
+                                <h3 className="edu-degree">B.Tech, Computer Science and Engineering</h3>
+                                <p className="edu-meta">
+                                    SRM Institute of Science and Technology, Trichy · Class of 2027
+                                </p>
+                            </div>
                         </div>
-                    </div>
-                </div>
+                    </section>
 
-                {/* === ACHIEVEMENTS === */}
-                <div className="inv-achievements">
-                    <div className="inv-section-tab">
-                        <Award size={14} /> Achievements Unlocked
-                    </div>
-                    <div className="inv-achievements-grid">
-                        {certsToRender.map((cert, idx) => (
-                            <div
-                                className="inv-achievement mc-slot cursor-target"
-                                key={idx}
-                                onClick={() => cert.imageUrl && setSelectedCert(cert)}
-                            >
-                                <div className="inv-ach-icon">🏆</div>
-                                <div className="inv-ach-info">
-                                    <h4>{cert.title}</h4>
-                                    <span className="inv-ach-issuer">{cert.issuer}</span>
-                                    <span className="inv-ach-date">{cert.date}</span>
-                                </div>
-                                <div className="inv-ach-unlocked">UNLOCKED</div>
-                            </div>
-                        ))}
-                    </div>
+                    {/* Certifications */}
+                    <section className="about-certs mc-panel">
+                        <h2 className="panel-heading">
+                            <Award size={13} aria-hidden="true" /> Certifications
+                        </h2>
+                        <ul className="cert-grid">
+                            {certs.map((cert, i) => {
+                                const clickable = Boolean(cert.imageUrl);
+                                return (
+                                    <li
+                                        key={i}
+                                        className={`cert-card mc-slot ${clickable ? 'is-clickable cursor-target' : ''}`}
+                                        onClick={() => clickable && setSelectedCert(cert)}
+                                        role={clickable ? 'button' : undefined}
+                                        tabIndex={clickable ? 0 : undefined}
+                                        onKeyDown={(e) => {
+                                            if (clickable && (e.key === 'Enter' || e.key === ' ')) {
+                                                e.preventDefault();
+                                                setSelectedCert(cert);
+                                            }
+                                        }}
+                                    >
+                                        <Award size={16} className="cert-icon" aria-hidden="true" />
+                                        <div className="cert-info">
+                                            <h3 className="cert-title">{cert.title}</h3>
+                                            <span className="cert-issuer">{cert.issuer}</span>
+                                        </div>
+                                        <span className="cert-date mc-micro">{cert.date}</span>
+                                    </li>
+                                );
+                            })}
+                        </ul>
+                    </section>
                 </div>
             </div>
 
-            <ImageModal isOpen={!!selectedCert} imageUrl={selectedCert?.imageUrl} altText={selectedCert?.title} onClose={() => setSelectedCert(null)} />
+            <ImageModal
+                isOpen={Boolean(selectedCert)}
+                imageUrl={selectedCert?.imageUrl}
+                altText={selectedCert?.title}
+                onClose={() => setSelectedCert(null)}
+            />
         </div>
     );
 };
